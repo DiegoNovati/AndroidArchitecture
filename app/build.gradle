@@ -4,12 +4,12 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk sdk_compile
 
     defaultConfig {
         applicationId "com.elt.passsystem"
-        minSdk 21
-        targetSdk 32
+        minSdk sdk_min
+        targetSdk sdk_target
         versionCode 1
         versionName "1.0"
 
