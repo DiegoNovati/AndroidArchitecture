@@ -14,13 +14,16 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
+    // Arrow - Functional programming
+    api "io.arrow-kt:arrow-core:1.0.1"
+
     // ********** Testing **********
 
     // JUnit
     testImplementation 'junit:junit:4.13.2'
 
     // MockK
-    testImplementation "io.mockk:mockk:1.12.1"
+    testImplementation 'io.mockk:mockk:1.12.2'
 
     // Coroutines
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-debug:$coroutines_version"
