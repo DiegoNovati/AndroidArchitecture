@@ -10,8 +10,8 @@ android {
         applicationId "com.elt.passsystem"
         minSdk sdk_min
         targetSdk sdk_target
-        versionCode 1
-        versionName "1.0"
+        versionCode version_code
+        versionName version_name
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

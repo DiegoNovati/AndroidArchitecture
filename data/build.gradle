@@ -10,13 +10,20 @@ android {
     defaultConfig {
         minSdk sdk_min
         targetSdk sdk_target
+        versionCode version_code
+        versionName version_name
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
+        debug {
+            buildConfigField "String", "BACKEND_URL", '"https://qaappapi.passgenius.com"'
+        }
         release {
+            buildConfigField "String", "BACKEND_URL", '"https://api.passgenius.com"'
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
