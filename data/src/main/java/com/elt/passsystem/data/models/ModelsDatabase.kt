@@ -1,0 +1,53 @@
+package com.elt.passsystem.data.models
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+object TableCustomers {
+    const val tableName = "customers"
+    const val fieldBid = "bid"
+    const val fieldUuid = "uuid"
+    const val fieldTitle = "title"
+    const val fieldFirstName = "firstname"
+    const val fieldLocation = "location"
+}
+
+@Entity(
+    tableName = TableCustomers.tableName,
+)
+data class DBCustomer(
+    @PrimaryKey(autoGenerate = false)
+    @ColumnInfo(name = TableCustomers.fieldBid)
+    val bid: String,
+    @ColumnInfo(name = TableCustomers.fieldUuid)
+    val uuid: String,
+    @ColumnInfo(name = TableCustomers.fieldTitle)
+    val title: String?,
+    @ColumnInfo(name = TableCustomers.fieldFirstName)
+    val firstname: String?,
+    @ColumnInfo(name = TableCustomers.fieldLocation)
+    val location: String?,
+)
+
+enum class BookingStatus {
+    Completed, Started, Scheduled, Unknown,
+}
+
+object TableBookings {
+    const val tableName = "bookings"
+    const val fieldCustomerBid = "customerBid"
+    const val fieldStatus = "status"
+}
+
+@Entity(
+    tableName = TableBookings.tableName,
+)
+data class DBBooking(
+    @PrimaryKey(autoGenerate = false)
+    val id: Long,
+    @ColumnInfo(name = TableBookings.fieldCustomerBid)
+    val customerBid: String,
+    @ColumnInfo(name = TableBookings.fieldStatus)
+    val status: BookingStatus,
+)

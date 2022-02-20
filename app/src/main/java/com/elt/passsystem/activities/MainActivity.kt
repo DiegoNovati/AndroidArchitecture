@@ -1,4 +1,4 @@
-package com.elt.passsystem
+package com.elt.passsystem.activities
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
