@@ -7,6 +7,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 
+object NoParams
+
 sealed class Failure {
     data class UnexpectedError(val e: Throwable) : Failure()
     abstract class FeatureFailure : Failure()

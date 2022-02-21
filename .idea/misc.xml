@@ -6,8 +6,20 @@
         <entry key="../../../../layout/compose-model-1645196167222.xml" value="0.1" />
         <entry key="../../../../layout/compose-model-1645278889300.xml" value="0.8158844765342961" />
         <entry key="../../../../layout/compose-model-1645427302548.xml" value="0.8158844765342961" />
+        <entry key="../../../../layout/compose-model-1645443018280.xml" value="0.41944444444444445" />
+        <entry key="../../../../layout/compose-model-1645444041961.xml" value="0.45" />
+        <entry key="../../../../layout/compose-model-1645444241783.xml" value="0.41944444444444445" />
+        <entry key="../../../../layout/compose-model-1645450132023.xml" value="0.41944444444444445" />
+        <entry key="../../../../layout/compose-model-1645452364415.xml" value="0.3333333333333333" />
       </map>
     </option>
+  </component>
+  <component name="EntryPointsManager">
+    <list size="3">
+      <item index="0" class="java.lang.String" itemvalue="dagger.Binds" />
+      <item index="1" class="java.lang.String" itemvalue="dagger.Provides" />
+      <item index="2" class="java.lang.String" itemvalue="dagger.hilt.InstallIn" />
+    </list>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />

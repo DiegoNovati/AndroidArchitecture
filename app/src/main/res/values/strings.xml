@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">AndroidArchitecture</string>
+    <string name="appName">Android Architecture</string>
+
+    <string name="loginTitle">Login</string>
+    <string name="loginInputUsername">Username</string>
+    <string name="loginInputPassword">Password</string>
+    <string name="loginLoginButton">Login</string>
+    <string name="loginLoginReset">Reset</string>
+    <string name="loginLoginErrorBackendProblems">There were backend problems. Please retry in a couple of minutes</string>
+    <string name="loginLoginErrorConnectionProblems">There were Internet problems. Please verify you are still connected to Internet</string>
+    <string name="loginLoginErrorLoginError">Login failed. Please check the username/password</string>
 </resources>
