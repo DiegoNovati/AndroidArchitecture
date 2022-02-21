@@ -12,14 +12,13 @@ import com.elt.passsystem.services.Route
 @Composable
 fun NavigationHost(
     navController: NavHostController,
-    initialDestination: Route,
     serviceNavigation: IServiceNavigation,
 ) {
     NavHost(
         navController = navController,
-        startDestination = initialDestination.routeName,
+        startDestination = serviceNavigation.getInitialRoute().routeName,
     ) {
-        composable(route = Route.Login.routeName) { LoginScreen(serviceNavigation = serviceNavigation) }
-        composable(route = Route.Home.routeName) { HomeScreen(serviceNavigation = serviceNavigation) }
+        composable(route = Route.Login.routeName) { LoginScreen() }
+        composable(route = Route.Home.routeName) { HomeScreen() }
     }
 }

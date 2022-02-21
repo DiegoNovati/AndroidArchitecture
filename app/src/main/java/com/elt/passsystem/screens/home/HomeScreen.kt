@@ -8,11 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import com.elt.passsystem.services.IServiceNavigation
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun HomeScreen(
-    serviceNavigation: IServiceNavigation,
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     Column(
         modifier = Modifier
@@ -24,7 +24,7 @@ fun HomeScreen(
             fontSize = 22.sp,
         )
         Button(onClick = {
-            serviceNavigation.popBack()
+            viewModel.popBack()
         }) {
             Text(text = "Back")
         }

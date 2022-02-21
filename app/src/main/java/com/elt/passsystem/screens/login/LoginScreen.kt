@@ -8,12 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import com.elt.passsystem.services.IServiceNavigation
-import com.elt.passsystem.services.Route
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun LoginScreen(
-    serviceNavigation: IServiceNavigation,
+    viewModel: LoginViewModel = hiltViewModel(),
 ) {
     Column(
         modifier = Modifier
@@ -25,7 +24,7 @@ fun LoginScreen(
             fontSize = 22.sp,
         )
         Button(onClick = {
-            serviceNavigation.open(Route.Home)
+            viewModel.navigateToHome()
         }) {
             Text(text = "Open Home")
         }

@@ -1,13 +1,22 @@
 package com.elt.passsystem.services
 
 import androidx.navigation.NavController
+import javax.inject.Inject
 
 /**
  * List of possible routes
  */
-sealed class Route(val routeName: String) {
-    object Login: Route("Login")
-    object Home: Route("Home")
+sealed class Route(val routeName: String, val isInitialRoute: Boolean = false) {
+    object Login : Route("Login", true)
+    object Home : Route("Home")
+
+    companion object {
+        fun getInitialRoute(): Route =
+            Route::class.sealedSubclasses
+                .firstOrNull { it.objectInstance?.isInitialRoute == true }
+                ?.objectInstance
+                ?: Login
+    }
 }
 
 fun String.toRoute(): Route =
@@ -18,11 +27,10 @@ fun String.toRoute(): Route =
 
 interface IServiceNavigation {
     /**
-     * Setup the navigation service
+     * Setup the navigation service with the initial route
      */
     fun setNavController(
-        navController: NavController,
-        initialRoute: Route,
+        navController: NavController
     )
 
     /**
@@ -54,14 +62,16 @@ interface IServiceNavigation {
     fun updateCurrentRoute()
 }
 
-class ServiceNavigation : IServiceNavigation {
+class ServiceNavigation @Inject constructor(
+): IServiceNavigation {
 
     private lateinit var navController: NavController
     private lateinit var currentRoute: Route
     private lateinit var initialRoute: Route
 
-    override fun setNavController(navController: NavController, initialRoute: Route) {
+    override fun setNavController(navController: NavController) {
         this.navController = navController
+        val initialRoute = Route.getInitialRoute()
         this.currentRoute = initialRoute
         this.initialRoute = initialRoute
     }
@@ -85,7 +95,7 @@ class ServiceNavigation : IServiceNavigation {
     }
 
     override fun popBack() {
-        val previous = navController.backQueue[navController.backQueue.size-2].destination.route
+        val previous = navController.backQueue[navController.backQueue.size - 2].destination.route
         if (previous == null || previous == currentRoute.routeName) {
             // preventing double tab
             return
