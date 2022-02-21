@@ -9,16 +9,15 @@ import org.junit.Test
 
 class PassApiTest: BaseDataRobolectricTest() {
 
-    private val baseUrl = "https://qaappapi.passgenius.com"
     private val username = "DavidB811543"
-//    private val username = "PhilF125314"
     private val password = "Qwaszx12"
 
     private lateinit var passApi: IPassApi
 
     @Before
     fun setUp() {
-        passApi = createPassApi(context, releaseMode = false)
+        // Setting 'releaseMode = false' allows to log the communication with the backend
+        passApi = createPassApi(context, releaseMode = true)
     }
 
     @Test
@@ -31,8 +30,5 @@ class PassApiTest: BaseDataRobolectricTest() {
         passApi.getCustomerList(authorization, officeBid)
 
         passApi.getBookingList(authorization, officeBid)
-
-        println("auth = $auth")
-        println(authenticateResponse)
     }
 }

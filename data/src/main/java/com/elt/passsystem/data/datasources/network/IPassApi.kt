@@ -21,7 +21,7 @@ fun createPassApi(context: Context, releaseMode: Boolean): IPassApi =
     getRetrofit(context, BuildConfig.BACKEND_URL, releaseMode).create(IPassApi::class.java)
 
 private val gson = GsonBuilder()
-    .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+    .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
     .create()
 
 internal fun getRetrofit(context: Context, url: String, releaseMode: Boolean): Retrofit =
@@ -51,7 +51,8 @@ interface IPassApi {
     suspend fun authenticate(
         @Header(PLATFORM) platform: String = PLATFORM_VALUE,
         @Header(APP_VERSION_NAME) appVersionName: String = VERSION_NAME,
-        @Header(AUTHORISATION) auth: String
+        @Header(AUTHORISATION) auth: String,
+        @Header(UNIQUE_DEVICE_ID) uniqueDeviceId: String = UNIQUE_DEVICE_ID_VALUE
     ): NetAuthenticateResponse
 
     @GET("/api/v3/offices/{$OFFICE_BID}/customers")
@@ -72,6 +73,8 @@ interface IPassApi {
         const val APP_VERSION_NAME = "App-Version-Name"
         const val VERSION_NAME = "1.83.0"
         const val AUTHORISATION = "Authorization"
+        const val UNIQUE_DEVICE_ID = "Unique-Device-Identifier"
+        const val UNIQUE_DEVICE_ID_VALUE = "511631b02984faf0"
         internal const val OFFICE_BID = "officeBid"
     }
 }

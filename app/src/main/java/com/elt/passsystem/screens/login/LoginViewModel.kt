@@ -20,11 +20,11 @@ class LoginViewModel @Inject constructor(
 ) : ViewModel() {
 
     sealed class LoginState {
-        object NoError: LoginState()
-        object LoginError: LoginState()
-        object BackendProblems: LoginState()
-        object ConnectionProblems: LoginState()
-        data class UnexpectedProblems(val error: String): LoginState()
+        object NoError : LoginState()
+        object LoginError : LoginState()
+        object BackendProblems : LoginState()
+        object ConnectionProblems : LoginState()
+        data class UnexpectedProblems(val error: String) : LoginState()
     }
 
     private val _state: MutableLiveData<LoginState> by lazy { MutableLiveData<LoginState>() }
@@ -45,7 +45,11 @@ class LoginViewModel @Inject constructor(
                 it.fold({ failure ->
                     when (failure) {
                         is Failure.UnexpectedError ->
-                            updateState(LoginState.UnexpectedProblems(failure.e.message ?: "Unexpected problem"))
+                            updateState(
+                                LoginState.UnexpectedProblems(
+                                    failure.e.message ?: "Unexpected problem"
+                                )
+                            )
                         is Failure.FeatureFailure -> when (failure as UseCaseAuthenticationLogin.LoginFailure) {
                             UseCaseAuthenticationLogin.LoginFailure.BackendProblems ->
                                 updateState(LoginState.BackendProblems)
@@ -55,7 +59,7 @@ class LoginViewModel @Inject constructor(
                                 updateState(LoginState.LoginError)
                         }
                     }
-                }){ loginResult ->
+                }) { loginResult ->
                     openHome(loginResult)
                 }
             }
