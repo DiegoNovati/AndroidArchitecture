@@ -17,7 +17,7 @@ class PassApiTest: BaseDataRobolectricTest() {
     @Before
     fun setUp() {
         // Setting 'releaseMode = false' allows to log the communication with the backend
-        passApi = createPassApi(context, releaseMode = true)
+        passApi = createPassApi(releaseMode = true)
     }
 
     @Test
