@@ -4,9 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Surface
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -19,7 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.elt.passsystem.R
 import com.elt.passsystem.ui.theme.AndroidArchitectureTheme
-import com.elt.passsystem.widgets.*
+import com.elt.passsystem.widgets.ButtonRoundedEdgesPrimary
+import com.elt.passsystem.widgets.ButtonRoundedEdgesSecondary
+import com.elt.passsystem.widgets.TextBody
+import com.elt.passsystem.widgets.TextError
 
 @Composable
 fun LoginScreen(
@@ -77,72 +78,72 @@ fun LoginScreenUI(
     onLogin: () -> Unit,
     onReset: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        //horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        TextTitleScreen(
-            text = stringResource(id = R.string.loginTitle),
-            modifier = Modifier.padding(
-                start = 16.dp,
-                end = 16.dp,
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = stringResource(id = R.string.loginTitle)) }
             )
-        )
+        }
+    ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState())
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
         ) {
-            OutlinedTextField(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                label = {
-                    TextBody(
-                        text = stringResource(id = R.string.loginInputUsername)
-                    )
-                },
-                value = username,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                onValueChange = { onUsernameChanged(it) }
-            )
-            OutlinedTextField(
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .fillMaxWidth(),
-                label = {
-                    TextBody(
-                        text = stringResource(id = R.string.loginInputPassword)
-                    )
-                },
-                value = password,
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                onValueChange = { onPasswordChanged(it) }
-            )
-            ButtonRoundedEdgesPrimary(
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .fillMaxWidth(),
-                enabled = username.isNotEmpty() && password.isNotEmpty(),
-                stringId = R.string.loginLoginButton,
-                onClick = { onLogin() }
-            )
-            ButtonRoundedEdgesSecondary(
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .fillMaxWidth(),
-                stringId = R.string.loginLoginReset,
-                onClick = { onReset() }
-            )
-            TextError(
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .fillMaxWidth(),
-                text = error,
-            )
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+            ) {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    label = {
+                        TextBody(
+                            text = stringResource(id = R.string.loginInputUsername)
+                        )
+                    },
+                    value = username,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    onValueChange = { onUsernameChanged(it) }
+                )
+                OutlinedTextField(
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .fillMaxWidth(),
+                    label = {
+                        TextBody(
+                            text = stringResource(id = R.string.loginInputPassword)
+                        )
+                    },
+                    value = password,
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    onValueChange = { onPasswordChanged(it) }
+                )
+                ButtonRoundedEdgesPrimary(
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .fillMaxWidth(),
+                    enabled = username.isNotEmpty() && password.isNotEmpty(),
+                    stringId = R.string.loginLoginButton,
+                    onClick = { onLogin() }
+                )
+                ButtonRoundedEdgesSecondary(
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .fillMaxWidth(),
+                    stringId = R.string.loginLoginReset,
+                    onClick = { onReset() }
+                )
+                TextError(
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .fillMaxWidth(),
+                    text = error,
+                )
+            }
         }
     }
 }

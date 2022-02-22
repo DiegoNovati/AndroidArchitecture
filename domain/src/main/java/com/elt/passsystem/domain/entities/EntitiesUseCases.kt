@@ -1,5 +1,7 @@
 package com.elt.passsystem.domain.entities
 
+import java.util.Date
+
 data class LoginResult(
     val officeBid: String,
     val customerList: List<Customer> = listOf(),
@@ -21,5 +23,7 @@ sealed class BookingStatus {
 data class Booking(
     val bookingBid: Long,
     val customerBid: String,
-    val status: BookingStatus
+    val status: BookingStatus,
+    val start: Date,
+    val end: Date,
 )

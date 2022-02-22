@@ -3,6 +3,7 @@ package com.elt.passsystem.data.models
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.*
 
 object TableCustomers {
     const val tableName = "customers"
@@ -50,6 +51,8 @@ object TableBookings {
     const val tableName = "bookings"
     const val fieldCustomerBid = "customerBid"
     const val fieldStatus = "status"
+    const val fieldStart = "start"
+    const val fieldEnd = "end"
 }
 
 @Entity(
@@ -62,4 +65,10 @@ data class DBBooking(
     val customerBid: String,
     @ColumnInfo(name = TableBookings.fieldStatus)
     val status: DBBookingStatus,
+    @ColumnInfo(name = TableBookings.fieldStart)
+    val start: Date,
+    @ColumnInfo(name = TableBookings.fieldEnd)
+    val end: Date,
 )
+
+

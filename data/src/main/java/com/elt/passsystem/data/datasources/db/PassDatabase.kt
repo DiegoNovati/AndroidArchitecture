@@ -1,11 +1,11 @@
 package com.elt.passsystem.data.datasources.db
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room.*
 import com.elt.passsystem.data.models.DBBooking
 import com.elt.passsystem.data.models.DBCustomer
+import java.text.SimpleDateFormat
+import java.util.*
 
 interface IPassDatabase {
     fun daoCustomers(): DaoCustomers
@@ -25,6 +25,7 @@ interface IPassDatabase {
     ],
     exportSchema = true
 )
+@TypeConverters(RoomConverters::class)
 abstract class PassDatabase : IPassDatabase, RoomDatabase() {
     abstract override fun daoCustomers(): DaoCustomers
     abstract override fun daoBookings(): DaoBookings
@@ -38,3 +39,15 @@ fun openDatabase(applicationContext: Context): PassDatabase =
             "PassDatabase.db"
         )
         .build()
+
+class RoomConverters {
+
+    @TypeConverter
+    fun dateToString(date: Date): String = roomDateFormat.format(date)
+
+    @TypeConverter
+    fun stringToDate(value: String): Date =
+        roomDateFormat.parse(value) ?: Date()
+}
+
+val roomDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.UK)

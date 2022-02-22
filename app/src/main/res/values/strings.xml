@@ -10,5 +10,8 @@
     <string name="loginErrorConnectionProblems">There were Internet problems. Please verify you are still connected to Internet</string>
     <string name="loginErrorLoginError">Login failed. Please check the username/password</string>
 
+    <string name="homeTitle">Home</string>
     <string name="homeLogoutButton">Logout</string>
+    <string name="homeBottomScreenBookingsTitle">Bookings</string>
+    <string name="homeBottomScreenCustomersTitle">Customers</string>
 </resources>

@@ -1,38 +1,78 @@
 package com.elt.passsystem.screens.home
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.elt.passsystem.R
-import com.elt.passsystem.domain.entities.Customer
 import com.elt.passsystem.domain.entities.Booking
 import com.elt.passsystem.domain.entities.BookingStatus
+import com.elt.passsystem.domain.entities.Customer
 import com.elt.passsystem.domain.entities.LoginResult
-import com.elt.passsystem.extensions.toDescription
 import com.elt.passsystem.ui.theme.AndroidArchitectureTheme
-import com.elt.passsystem.widgets.ButtonRoundedEdgesPrimary
+import java.text.SimpleDateFormat
+import java.util.*
+
+sealed class BottomBarRoute(val routeName: String, val isInitialRoute: Boolean = false) {
+    object Bookings : BottomBarRoute("Bookings", true)
+    object Customers : BottomBarRoute("Customers")
+
+    companion object {
+        fun getInitialRoute(): BottomBarRoute =
+            BottomBarRoute::class.sealedSubclasses
+                .firstOrNull { it.objectInstance?.isInitialRoute == true }
+                ?.objectInstance
+                ?: Bookings
+    }
+}
+
+sealed class BottomBarScreen(
+    val route: BottomBarRoute,
+    @StringRes val titleId: Int,
+    val icon: ImageVector,
+) {
+    object Bookings : BottomBarScreen(
+        route = BottomBarRoute.Bookings,
+        titleId = R.string.homeBottomScreenBookingsTitle,
+        icon = Icons.Filled.DateRange,
+    )
+
+    object Customers : BottomBarScreen(
+        route = BottomBarRoute.Customers,
+        titleId = R.string.homeBottomScreenCustomersTitle,
+        icon = Icons.Filled.Person,
+    )
+}
 
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
+    val navController = rememberNavController()
     val loginResult = viewModel.state.observeAsState(
         LoginResult("", listOf(), listOf())
     ).value
 
     HomeScreenUI(
+        navController = navController,
         customerList = loginResult.customerList,
         bookingList = loginResult.bookingList,
         onLogout = {
@@ -43,85 +83,143 @@ fun HomeScreen(
 
 @Composable
 fun HomeScreenUI(
+    navController: NavHostController,
     customerList: List<Customer>,
     bookingList: List<Booking>,
     onLogout: () -> Unit,
 ) {
-    LazyColumn(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxSize(),
+    Scaffold(
+        topBar = {
+            HomeTopBar(
+                onLogout = onLogout
+            )
+        },
+        bottomBar = {
+            BottomBar(
+                navController = navController,
+            )
+        }
     ) {
-        item {
-            TextTitle(
-                text = "Customers"
-            )
-        }
-        items(customerList) { customer ->
+        BottomNavigationHost(
+            navController = navController,
+            customerList = customerList,
+            bookingList = bookingList,
+        )
+    }
+}
+
+@Composable
+fun HomeTopBar(
+    onLogout: () -> Unit,
+) {
+    TopAppBar(
+        title = {
             Text(
-                modifier = Modifier
-                    .padding(8.dp),
-                text = "${customer.name} - ${customer.address}"
+                text = stringResource(id = R.string.homeTitle),
             )
+        },
+        actions = {
+            IconButton(
+                onClick = {
+                    onLogout()
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ExitToApp,
+                    contentDescription = stringResource(id = R.string.homeLogoutButton),
+                )
+            }
         }
-        item {
-            TextTitle(text = "Bookings")
-        }
-        items(bookingList) { booking ->
-            Text(
-                modifier = Modifier
-                    .padding(8.dp),
-                text = "${booking.bookingBid} - ${booking.status.toDescription()}"
-            )
-        }
-        item {
-            ButtonRoundedEdgesPrimary(
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .fillMaxWidth(),
-                stringId = R.string.homeLogoutButton,
-                onClick = { onLogout() }
+    )
+}
+
+@Composable
+fun BottomBar(
+    navController: NavHostController,
+) {
+    val screens = listOf(
+        BottomBarScreen.Bookings,
+        BottomBarScreen.Customers,
+    )
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
+    BottomNavigation {
+        screens.forEach { screen ->
+            AddItem(
+                screen = screen,
+                currentDestination = currentDestination,
+                navController = navController,
             )
         }
     }
 }
 
 @Composable
-fun TextTitle(
-    text: String,
-    modifier: Modifier = Modifier,
+fun RowScope.AddItem(
+    screen: BottomBarScreen,
+    currentDestination: NavDestination?,
+    navController: NavHostController,
 ) {
-    Text(
-        text = text,
-        modifier = modifier,
-        style = MaterialTheme.typography.body1.copy(
-            fontWeight = FontWeight.Bold,
-        ),
+    BottomNavigationItem(
+        label = {
+            Text(
+                text = stringResource(id = screen.titleId)
+            )
+        },
+        icon = {
+            Icon(
+                imageVector = screen.icon,
+                contentDescription = stringResource(id = screen.titleId),
+            )
+        },
+        selected = currentDestination?.hierarchy?.any {
+            it.route == screen.route.routeName
+        } == true,
+        onClick = {
+            navController.navigate(screen.route.routeName) {
+                popUpTo(navController.graph.findStartDestination().id)
+                launchSingleTop = true
+            }
+        }
     )
+}
+
+@Composable
+fun BottomNavigationHost(
+    navController: NavHostController,
+    customerList: List<Customer>,
+    bookingList: List<Booking>,
+) {
+    NavHost(
+        navController = navController,
+        startDestination = BottomBarRoute.getInitialRoute().routeName,
+    ) {
+        composable(route = BottomBarRoute.Bookings.routeName) { HomeBookingsScreen(bookingList) }
+        composable(route = BottomBarRoute.Customers.routeName) { HomeCustomersScreen(customerList) }
+    }
 }
 
 @Composable
 @Preview(showBackground = true)
 fun HomeScreenUIPreview() {
+    val navController = rememberNavController()
     val customerList = listOf(
         Customer("1", "Mr. John", "25 Oxford Circus, London"),
         Customer("2", "Mrs. Jane", "4 Piccadilly Circus, London"),
     )
+    val formatTime = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
     val bookingList = listOf(
-        Booking(1, "1", BookingStatus.Scheduled),
-        Booking(2, "1", BookingStatus.Started),
-        Booking(3, "1", BookingStatus.Completed),
+        Booking(1, "1", BookingStatus.Scheduled, formatTime.parse("08:00:00")!!, formatTime.parse("12:00:00")!!,),
+        Booking(2, "1", BookingStatus.Started, formatTime.parse("14:00:00")!!, formatTime.parse("16:00:00")!!,),
+        Booking(3, "1", BookingStatus.Completed, formatTime.parse("18:00:00")!!, formatTime.parse("20:00:00")!!,),
     )
     AndroidArchitectureTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colors.background
-        ) {
-            HomeScreenUI(
-                customerList = customerList,
-                bookingList = bookingList,
-                onLogout = {}
-            )
-        }
+        HomeScreenUI(
+            navController = navController,
+            customerList = customerList,
+            bookingList = bookingList,
+            onLogout = {}
+        )
     }
 }

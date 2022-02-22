@@ -11,7 +11,9 @@ fun DBBooking.toBooking(): Booking =
     Booking(
         bookingBid = this.id,
         customerBid = this.customerBid,
-        status = this.status.toBookingStatus()
+        status = this.status.toBookingStatus(),
+        start = this.start,
+        end = this.end,
     )
 
 /**
@@ -26,7 +28,9 @@ fun NetBooking.toDBBooking(): DBBooking =
     DBBooking(
         id = this.id,
         customerBid = this.customerBid,
-        status = netStatusToBookingStatus(this.status)
+        status = netStatusToBookingStatus(this.status),
+        start = this.start,
+        end = this.end,
     )
 
 fun List<NetBooking>.toDBBookingList(): List<DBBooking> =
