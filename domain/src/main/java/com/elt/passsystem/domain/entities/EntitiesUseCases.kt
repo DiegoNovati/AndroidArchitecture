@@ -2,8 +2,8 @@ package com.elt.passsystem.domain.entities
 
 data class LoginResult(
     val officeBid: String,
-    val customerList: List<Customer>,
-    val bookingList: List<Booking>,
+    val customerList: List<Customer> = listOf(),
+    val bookingList: List<Booking> = listOf(),
 )
 
 data class Customer(
@@ -19,7 +19,7 @@ sealed class BookingStatus {
 }
 
 data class Booking(
-    val bookingBid: String,
+    val bookingBid: Long,
     val customerBid: String,
     val status: BookingStatus
 )

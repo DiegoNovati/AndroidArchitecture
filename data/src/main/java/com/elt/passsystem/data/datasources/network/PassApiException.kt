@@ -6,6 +6,7 @@ enum class PassApiErrorCode {
     SSLError,
     Http400,
     Http401,
+    Http403,
     HttpUnmanaged,
     NoDataChanges,
     IO,

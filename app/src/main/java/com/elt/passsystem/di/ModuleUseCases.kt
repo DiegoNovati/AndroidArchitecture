@@ -1,9 +1,9 @@
 package com.elt.passsystem.di
 
 import com.elt.passsystem.data.DataInterface
-import com.elt.passsystem.domain.repositories.IRepositoryAnalytics
-import com.elt.passsystem.domain.repositories.IRepositoryLogger
+import com.elt.passsystem.domain.repositories.*
 import com.elt.passsystem.domain.usecases.authentication.UseCaseAuthenticationLogin
+import com.elt.passsystem.domain.usecases.authentication.UseCaseAuthenticationLogout
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,11 +25,40 @@ object ModuleUseCases {
         DataInterface.repositoryAnalytics
 
     @Provides
+    @Singleton
+    fun provideRepositoryAuthentication(): IRepositoryAuthentication =
+        DataInterface.repositoryAuthentication
+
+    @Provides
+    @Singleton
+    fun provideRepositoryCustomers(): IRepositoryCustomers =
+        DataInterface.repositoryCustomers
+
+    @Provides
+    @Singleton
+    fun provideRepositoryBookings(): IRepositoryBookings =
+        DataInterface.repositoryBookings
+
+    @Provides
     fun provideUseCaseAuthenticationLogin(
         repositoryLogger: IRepositoryLogger,
         repositoryAnalytics: IRepositoryAnalytics,
+        repositoryAuthentication: IRepositoryAuthentication,
+        repositoryCustomers: IRepositoryCustomers,
+        repositoryBookings: IRepositoryBookings,
     ): UseCaseAuthenticationLogin =
         UseCaseAuthenticationLogin(
-            repositoryLogger, repositoryAnalytics
+            repositoryLogger, repositoryAnalytics, repositoryAuthentication, repositoryCustomers,
+            repositoryBookings
+        )
+
+    @Provides
+    fun provideUseCaseAuthenticationLogout(
+        repositoryLogger: IRepositoryLogger,
+        repositoryAnalytics: IRepositoryAnalytics,
+        repositoryAuthentication: IRepositoryAuthentication,
+    ): UseCaseAuthenticationLogout =
+        UseCaseAuthenticationLogout(
+            repositoryLogger, repositoryAnalytics, repositoryAuthentication
         )
 }

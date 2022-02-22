@@ -12,12 +12,18 @@ interface IPassDatabase {
     fun daoBookings(): DaoBookings
 }
 
+// To support auto-migration:
+//    https://medium.com/androiddevelopers/room-auto-migrations-d5370b0ca6eb
 @Database(
     version = 1,
     entities = [
         DBCustomer::class,
         DBBooking::class,
-    ]
+    ],
+    autoMigrations = [
+//        AutoMigration(from = 1, to = 2),
+    ],
+    exportSchema = true
 )
 abstract class PassDatabase : IPassDatabase, RoomDatabase() {
     abstract override fun daoCustomers(): DaoCustomers

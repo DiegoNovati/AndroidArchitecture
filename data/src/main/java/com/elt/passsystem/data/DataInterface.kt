@@ -8,10 +8,8 @@ import com.elt.passsystem.data.datasources.db.PassDatabase
 import com.elt.passsystem.data.datasources.db.openDatabase
 import com.elt.passsystem.data.datasources.network.IPassApi
 import com.elt.passsystem.data.datasources.network.createPassApi
-import com.elt.passsystem.data.repositories.RepositoryAnalytics
-import com.elt.passsystem.data.repositories.RepositoryLogger
-import com.elt.passsystem.domain.repositories.IRepositoryAnalytics
-import com.elt.passsystem.domain.repositories.IRepositoryLogger
+import com.elt.passsystem.data.repositories.*
+import com.elt.passsystem.domain.repositories.*
 
 /**
  * This object exports the repositories needed by the use cases and avoid the use of any
@@ -30,7 +28,7 @@ object DataInterface {
      */
     fun initDataLayer(applicationContext: Context, releaseMode: Boolean) {
         passDatabase = openDatabase(applicationContext)
-        passApi = createPassApi(applicationContext, releaseMode)
+        passApi = createPassApi(releaseMode)
     }
 
     val repositoryAnalytics: IRepositoryAnalytics by lazy {
@@ -39,6 +37,18 @@ object DataInterface {
 
     val repositoryLogger: IRepositoryLogger by lazy {
         RepositoryLogger(dataSourceLogger)
+    }
+
+    val repositoryAuthentication: IRepositoryAuthentication by lazy {
+        RepositoryAuthentication(dataSourceBackend)
+    }
+
+    val repositoryCustomers: IRepositoryCustomers by lazy {
+        RepositoryCustomers(dataSourceBackend, dataSourceDatabaseCustomers)
+    }
+
+    val repositoryBookings: IRepositoryBookings by lazy {
+        RepositoryBookings(dataSourceBackend, dataSourceDatabaseBookings)
     }
 
     private val dataSourceAnalytics: IDataSourceAnalytics by lazy {
@@ -51,6 +61,10 @@ object DataInterface {
 
     private val consoleApi: IConsoleApi by lazy {
         ConsoleApi()
+    }
+
+    private val dataSourceBackend: IDataSourceBackend by lazy {
+        DataSourceBackend(passApi)
     }
 
     private val dataSourceDatabaseCustomers: IDataSourceDatabaseCustomers by lazy {

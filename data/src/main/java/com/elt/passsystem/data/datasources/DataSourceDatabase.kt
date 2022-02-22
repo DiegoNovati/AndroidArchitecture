@@ -1,8 +1,8 @@
 package com.elt.passsystem.data.datasources
 
 import com.elt.passsystem.data.datasources.db.IPassDatabase
-import com.elt.passsystem.data.models.BookingStatus
 import com.elt.passsystem.data.models.DBBooking
+import com.elt.passsystem.data.models.DBBookingStatus
 import com.elt.passsystem.data.models.DBCustomer
 
 interface IDataSourceDatabaseCustomers {
@@ -18,7 +18,7 @@ interface IDataSourceDatabaseCustomers {
 
 interface IDataSourceDatabaseBookings {
     suspend fun list(): List<DBBooking>
-    suspend fun listByStatus(status: BookingStatus): List<DBBooking>
+    suspend fun listByStatus(status: DBBookingStatus): List<DBBooking>
     suspend fun insert(booking: DBBooking)
     suspend fun insert(list: List<DBBooking>)
     suspend fun update(booking: DBBooking)
@@ -79,7 +79,7 @@ class DataSourceDatabaseBookings(
         passDatabase.daoBookings()
             .list()
 
-    override suspend fun listByStatus(status: BookingStatus): List<DBBooking> =
+    override suspend fun listByStatus(status: DBBookingStatus): List<DBBooking> =
         passDatabase.daoBookings()
             .list()
             .filter { it.status == status }

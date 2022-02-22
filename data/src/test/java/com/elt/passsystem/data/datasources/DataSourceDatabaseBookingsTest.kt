@@ -3,7 +3,7 @@ package com.elt.passsystem.data.datasources
 import com.elt.passsystem.data.BaseDataTest
 import com.elt.passsystem.data.datasources.db.DaoBookings
 import com.elt.passsystem.data.datasources.db.IPassDatabase
-import com.elt.passsystem.data.models.BookingStatus
+import com.elt.passsystem.data.models.DBBookingStatus
 import com.elt.passsystem.data.models.DBBooking
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -50,12 +50,12 @@ class DataSourceDatabaseBookingsTest: BaseDataTest() {
 
     @Test
     fun `testing listByTitle`() = runBlocking {
-        val status = BookingStatus.Completed
+        val status = DBBookingStatus.Completed
         val mockBooking1 = mockk<DBBooking>()
         val mockBooking2 = mockk<DBBooking>()
         val mockBooking3 = mockk<DBBooking>()
-        coEvery { mockBooking1.status } returns BookingStatus.Scheduled
-        coEvery { mockBooking2.status } returns BookingStatus.Scheduled
+        coEvery { mockBooking1.status } returns DBBookingStatus.Scheduled
+        coEvery { mockBooking2.status } returns DBBookingStatus.Scheduled
         coEvery { mockBooking3.status } returns status
         coEvery { mockDaoBookings.list() } returns listOf(mockBooking1, mockBooking2, mockBooking3)
 

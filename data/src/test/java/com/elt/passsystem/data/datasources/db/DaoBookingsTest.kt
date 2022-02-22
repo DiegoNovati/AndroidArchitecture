@@ -1,7 +1,7 @@
 package com.elt.passsystem.data.datasources.db
 
 import com.elt.passsystem.data.BaseDataDaoTest
-import com.elt.passsystem.data.models.BookingStatus
+import com.elt.passsystem.data.models.DBBookingStatus
 import com.elt.passsystem.data.models.DBBooking
 import junit.framework.TestCase.*
 import kotlinx.coroutines.Dispatchers
@@ -67,7 +67,7 @@ class DaoBookingsTest : BaseDataDaoTest() {
     @Test
     fun `testing update with existing booking`() = runBlocking(Dispatchers.IO) {
         val booking = createBooking(1)
-        val newStatus = BookingStatus.Unknown
+        val newStatus = DBBookingStatus.Unknown
 
         daoBookings.insert(booking)
         val dbBooking = daoBookings.getById(booking.id)!!.copy(status = newStatus)
@@ -128,5 +128,5 @@ class DaoBookingsTest : BaseDataDaoTest() {
     }
 
     private fun createBooking(id: Long): DBBooking =
-        DBBooking(id, "customer $id", BookingStatus.Started)
+        DBBooking(id, "customer $id", DBBookingStatus.Started)
 }

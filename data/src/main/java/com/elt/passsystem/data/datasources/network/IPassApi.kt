@@ -1,12 +1,10 @@
 package com.elt.passsystem.data.datasources.network
 
-import android.content.Context
 import com.elt.passsystem.data.BuildConfig
 import com.elt.passsystem.data.models.NetAuthenticateResponse
 import com.elt.passsystem.data.models.NetBookingsResponse
 import com.elt.passsystem.data.models.NetCustomersResponse
 import com.google.gson.GsonBuilder
-import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -17,30 +15,30 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import java.util.concurrent.TimeUnit
 
-fun createPassApi(context: Context, releaseMode: Boolean): IPassApi =
-    getRetrofit(context, BuildConfig.BACKEND_URL, releaseMode).create(IPassApi::class.java)
+fun createPassApi(releaseMode: Boolean): IPassApi =
+    getRetrofit(BuildConfig.BACKEND_URL, releaseMode).create(IPassApi::class.java)
 
 private val gson = GsonBuilder()
     .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
     .create()
 
-internal fun getRetrofit(context: Context, url: String, releaseMode: Boolean): Retrofit =
+internal fun getRetrofit(url: String, releaseMode: Boolean): Retrofit =
     Retrofit
         .Builder()
         .baseUrl(url)
-        .client(getHttpClient(context, releaseMode))
+        .client(getHttpClient(releaseMode))
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
-private fun getHttpClient(context: Context, releaseMode: Boolean): OkHttpClient {
+private fun getHttpClient(releaseMode: Boolean): OkHttpClient {
     val httpLoggingInterceptor = HttpLoggingInterceptor()
     httpLoggingInterceptor.level = if (releaseMode) HttpLoggingInterceptor.Level.NONE else HttpLoggingInterceptor.Level.BODY
 
     return OkHttpClient.Builder()
         .connectTimeout(10, TimeUnit.SECONDS)
         .readTimeout(10, TimeUnit.SECONDS)
-        .cache(Cache(context.cacheDir, (1024*1024*50).toLong()))
-        .addNetworkInterceptor(CustomHttp304CodeInterceptor())
+        //.cache(Cache(context.cacheDir, (1024*1024*50).toLong()))
+        //.addNetworkInterceptor(CustomHttp304CodeInterceptor())
         .addInterceptor(httpLoggingInterceptor)
         .build()
 }

@@ -28,9 +28,21 @@ data class DBCustomer(
     val firstname: String?,
     @ColumnInfo(name = TableCustomers.fieldLocation)
     val location: String?,
-)
+) {
+    val name: String
+        get() =
+            title?.let { title ->
+                firstname?.let { firstname ->
+                    "$title $firstname"
+                } ?: run {
+                    title
+                }
+            } ?: run {
+                firstname ?: ""
+            }
+}
 
-enum class BookingStatus {
+enum class DBBookingStatus {
     Completed, Started, Scheduled, Unknown,
 }
 
@@ -49,5 +61,5 @@ data class DBBooking(
     @ColumnInfo(name = TableBookings.fieldCustomerBid)
     val customerBid: String,
     @ColumnInfo(name = TableBookings.fieldStatus)
-    val status: BookingStatus,
+    val status: DBBookingStatus,
 )

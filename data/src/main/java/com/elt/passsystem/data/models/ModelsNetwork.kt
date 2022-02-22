@@ -22,6 +22,10 @@ data class NetAuthenticateOfficeCdn(
 )
 
 data class NetCustomersResponse(
+    val customers: List<NetCustomer>,
+)
+
+data class NetCustomer(
     val id: Long,
     val bid: String,
     val uuid: String,

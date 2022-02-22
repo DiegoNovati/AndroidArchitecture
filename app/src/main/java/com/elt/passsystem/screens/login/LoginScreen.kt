@@ -4,10 +4,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -32,50 +33,42 @@ fun LoginScreen(
     val error = when (val stateValue =
         viewModel.state.observeAsState(LoginViewModel.LoginState.NoError).value) {
         LoginViewModel.LoginState.NoError -> ""
-        LoginViewModel.LoginState.LoginError -> stringResource(id = R.string.loginLoginErrorLoginError)
-        LoginViewModel.LoginState.BackendProblems -> stringResource(id = R.string.loginLoginErrorBackendProblems)
-        LoginViewModel.LoginState.ConnectionProblems -> stringResource(id = R.string.loginLoginErrorConnectionProblems)
+        LoginViewModel.LoginState.LoginError -> stringResource(id = R.string.loginErrorLoginError)
+        LoginViewModel.LoginState.BackendProblems -> stringResource(id = R.string.loginErrorBackendProblems)
+        LoginViewModel.LoginState.ConnectionProblems -> stringResource(id = R.string.loginErrorConnectionProblems)
         is LoginViewModel.LoginState.UnexpectedProblems -> stateValue.error
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        LoginScreenUI(
-            modifier = Modifier,
-            username = username,
-            password = password,
-            error = error,
-            onUsernameChanged = {
-                username = it
-                viewModel.resetError()
-            },
-            onPasswordChanged = {
-                password = it
-                viewModel.resetError()
-            },
-            onLogin = {
-                viewModel.resetError()
-                viewModel.login(
-                    username = username,
-                    password = password,
-                )
-            },
-            onReset = {
-                username = ""
-                password = ""
-                focusManager.clearFocus()
-                viewModel.resetError()
-            }
-        )
-    }
+    LoginScreenUI(
+        username = username,
+        password = password,
+        error = error,
+        onUsernameChanged = {
+            username = it
+            viewModel.resetError()
+        },
+        onPasswordChanged = {
+            password = it
+            viewModel.resetError()
+        },
+        onLogin = {
+            viewModel.resetError()
+            viewModel.login(
+                username = username,
+                password = password,
+            )
+        },
+        onReset = {
+            username = ""
+            password = ""
+            focusManager.clearFocus()
+            viewModel.resetError()
+        }
+    )
 }
 
 @Composable
 fun LoginScreenUI(
-    modifier: Modifier = Modifier,
     username: String,
     password: String,
     error: String,
@@ -84,7 +77,11 @@ fun LoginScreenUI(
     onLogin: () -> Unit,
     onReset: () -> Unit
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        //horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         TextTitleScreen(
             text = stringResource(id = R.string.loginTitle),
             modifier = Modifier.padding(
@@ -154,14 +151,19 @@ fun LoginScreenUI(
 @Preview(showBackground = true)
 fun LoginScreenUIPreview() {
     AndroidArchitectureTheme {
-        LoginScreenUI(
-            username = "user01",
-            password = "password",
-            error = "",
-            onUsernameChanged = {},
-            onPasswordChanged = {},
-            onLogin = {},
-            onReset = {},
-        )
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colors.background
+        ) {
+            LoginScreenUI(
+                username = "user01",
+                password = "password",
+                error = "",
+                onUsernameChanged = {},
+                onPasswordChanged = {},
+                onLogin = {},
+                onReset = {},
+            )
+        }
     }
 }
