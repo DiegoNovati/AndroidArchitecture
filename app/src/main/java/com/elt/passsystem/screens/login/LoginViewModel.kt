@@ -9,6 +9,7 @@ import com.elt.passsystem.domain.usecases.Failure
 import com.elt.passsystem.domain.usecases.authentication.UseCaseAuthenticationLogin
 import com.elt.passsystem.services.IServiceNavigation
 import com.elt.passsystem.services.Route
+import com.elt.passsystem.state.GlobalState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val serviceNavigation: IServiceNavigation,
     private val useCaseAuthenticationLogin: UseCaseAuthenticationLogin,
+    private val globalState: GlobalState,
 ) : ViewModel() {
 
     sealed class LoginState {
@@ -71,7 +73,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun openHome(loginResult: LoginResult) {
-        // TODO: pass the result to the next screen
+        globalState.loginResult = loginResult
         serviceNavigation.open(Route.Home)
     }
 }

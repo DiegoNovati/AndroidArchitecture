@@ -1,6 +1,8 @@
 package com.elt.passsystem.di
 
+import com.elt.passsystem.services.IServiceActivityBus
 import com.elt.passsystem.services.IServiceNavigation
+import com.elt.passsystem.services.ServiceActivityBus
 import com.elt.passsystem.services.ServiceNavigation
 import dagger.Binds
 import dagger.Module
@@ -19,5 +21,11 @@ abstract class ModuleApp {
     abstract fun bindServiceNavigation(
         serviceNavigation: ServiceNavigation
     ): IServiceNavigation
+
+    @Binds
+    @Singleton
+    abstract fun bindServiceActivityBus(
+        serviceNavigation: ServiceActivityBus
+    ): IServiceActivityBus
 }
 
