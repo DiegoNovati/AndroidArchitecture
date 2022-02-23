@@ -2,10 +2,7 @@ package com.elt.passsystem.domain.usecases.authentication
 
 import arrow.core.Either
 import com.elt.passsystem.domain.BaseDomainTest
-import com.elt.passsystem.domain.entities.Booking
-import com.elt.passsystem.domain.entities.Customer
-import com.elt.passsystem.domain.entities.Login
-import com.elt.passsystem.domain.entities.LoginResult
+import com.elt.passsystem.domain.entities.*
 import com.elt.passsystem.domain.repositories.*
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
@@ -101,7 +98,7 @@ class UseCaseAuthenticationLoginTest : BaseDomainTest() {
 
         assertTrue(actual.isLeft())
         actual.fold({
-            assertEquals(UseCaseAuthenticationLogin.LoginFailure.LoginError, it)
+            assertEquals(AuthenticationLoginFailure.LoginError, it)
         }){}
 
         coVerify(exactly = 1) {
@@ -142,7 +139,7 @@ class UseCaseAuthenticationLoginTest : BaseDomainTest() {
 
         assertTrue(actual.isLeft())
         actual.fold({
-            assertEquals(UseCaseAuthenticationLogin.LoginFailure.ConnectionProblems, it)
+            assertEquals(AuthenticationLoginFailure.ConnectionProblems, it)
         }){}
 
         coVerify(exactly = 1) {
@@ -183,7 +180,7 @@ class UseCaseAuthenticationLoginTest : BaseDomainTest() {
 
         assertTrue(actual.isLeft())
         actual.fold({
-            assertEquals(UseCaseAuthenticationLogin.LoginFailure.ConnectionProblems, it)
+            assertEquals(AuthenticationLoginFailure.ConnectionProblems, it)
         }){}
 
         coVerify(exactly = 1) {
@@ -196,25 +193,25 @@ class UseCaseAuthenticationLoginTest : BaseDomainTest() {
     fun `testing AuthenticationFailure toLoginFailure`() {
         var actual = IRepositoryAuthentication.RepositoryAuthenticationFailure.BackendProblems.toLoginFailure()
 
-        assertEquals(UseCaseAuthenticationLogin.LoginFailure.BackendProblems, actual)
+        assertEquals(AuthenticationLoginFailure.BackendProblems, actual)
 
         actual = IRepositoryAuthentication.RepositoryAuthenticationFailure.ConnectionProblems.toLoginFailure()
 
-        assertEquals(UseCaseAuthenticationLogin.LoginFailure.ConnectionProblems, actual)
+        assertEquals(AuthenticationLoginFailure.ConnectionProblems, actual)
 
         actual = IRepositoryAuthentication.RepositoryAuthenticationFailure.LoginError.toLoginFailure()
 
-        assertEquals(UseCaseAuthenticationLogin.LoginFailure.LoginError, actual)
+        assertEquals(AuthenticationLoginFailure.LoginError, actual)
     }
 
     @Test
     fun `testing BackendFailure toLoginFailure`() {
         var actual = RepositoryBackendFailure.BackendProblems.toLoginFailure()
 
-        assertEquals(UseCaseAuthenticationLogin.LoginFailure.BackendProblems, actual)
+        assertEquals(AuthenticationLoginFailure.BackendProblems, actual)
 
         actual = RepositoryBackendFailure.ConnectionProblems.toLoginFailure()
 
-        assertEquals(UseCaseAuthenticationLogin.LoginFailure.ConnectionProblems, actual)
+        assertEquals(AuthenticationLoginFailure.ConnectionProblems, actual)
     }
 }

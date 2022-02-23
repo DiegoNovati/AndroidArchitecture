@@ -2,9 +2,9 @@ package com.elt.passsystem.domain.usecases.authentication
 
 import arrow.core.Either
 import arrow.core.flatMap
+import com.elt.passsystem.domain.entities.AuthenticationLoginFailure
 import com.elt.passsystem.domain.entities.LoginResult
 import com.elt.passsystem.domain.repositories.*
-import com.elt.passsystem.domain.usecases.Failure
 import com.elt.passsystem.domain.usecases.UseCaseSingle
 
 class UseCaseAuthenticationLogin(
@@ -13,7 +13,7 @@ class UseCaseAuthenticationLogin(
     private val repositoryAuthentication: IRepositoryAuthentication,
     private val repositoryCustomers: IRepositoryCustomers,
     private val repositoryBookings: IRepositoryBookings,
-) : UseCaseSingle<UseCaseAuthenticationLogin.Params, LoginResult>(
+) : UseCaseSingle<UseCaseAuthenticationLogin.Params, LoginResult, AuthenticationLoginFailure>(
     repositoryLogger, repositoryAnalytics
 ) {
 
@@ -21,22 +21,19 @@ class UseCaseAuthenticationLogin(
         val username: String,
         val password: String,
     ) {
+        /**
+         * We don't want to show the password when the params are logged
+         */
         override fun toString(): String =
             "Params(username=$username, password=**********)"
     }
 
-    sealed class LoginFailure : Failure.FeatureFailure() {
-        object ConnectionProblems : LoginFailure()
-        object BackendProblems : LoginFailure()
-        object LoginError : LoginFailure()
-    }
-
-    override suspend fun run(params: Params): Either<Failure, LoginResult> =
+    override suspend fun run(params: Params): Either<AuthenticationLoginFailure, LoginResult> =
         login(params)
             .flatMap { getCustomerList(it) }
             .flatMap { getBookingList(it) }
 
-    internal suspend fun login(params: Params): Either<LoginFailure, LoginResult> {
+    internal suspend fun login(params: Params): Either<AuthenticationLoginFailure, LoginResult> {
         val retValue = repositoryAuthentication.login(
             userName = params.username,
             password = params.password,
@@ -48,7 +45,7 @@ class UseCaseAuthenticationLogin(
         }
     }
 
-    internal suspend fun getCustomerList(loginResult: LoginResult): Either<LoginFailure, LoginResult> {
+    internal suspend fun getCustomerList(loginResult: LoginResult): Either<AuthenticationLoginFailure, LoginResult> {
         val retValue = repositoryCustomers.getCustomerList(loginResult.officeBid)
         return retValue.fold({ failure ->
             Either.Left(failure.toLoginFailure())
@@ -57,7 +54,7 @@ class UseCaseAuthenticationLogin(
         }
     }
 
-    internal suspend fun getBookingList(loginResult: LoginResult): Either<LoginFailure, LoginResult> {
+    internal suspend fun getBookingList(loginResult: LoginResult): Either<AuthenticationLoginFailure, LoginResult> {
         val retValue = repositoryBookings.getBookingList(loginResult.officeBid)
         return retValue.fold({ failure ->
             Either.Left(failure.toLoginFailure())
@@ -67,18 +64,18 @@ class UseCaseAuthenticationLogin(
     }
 }
 
-internal fun IRepositoryAuthentication.RepositoryAuthenticationFailure.toLoginFailure(): UseCaseAuthenticationLogin.LoginFailure =
+internal fun IRepositoryAuthentication.RepositoryAuthenticationFailure.toLoginFailure(): AuthenticationLoginFailure =
     when (this) {
         IRepositoryAuthentication.RepositoryAuthenticationFailure.BackendProblems ->
-            UseCaseAuthenticationLogin.LoginFailure.BackendProblems
+            AuthenticationLoginFailure.BackendProblems
         IRepositoryAuthentication.RepositoryAuthenticationFailure.ConnectionProblems ->
-            UseCaseAuthenticationLogin.LoginFailure.ConnectionProblems
+            AuthenticationLoginFailure.ConnectionProblems
         IRepositoryAuthentication.RepositoryAuthenticationFailure.LoginError ->
-            UseCaseAuthenticationLogin.LoginFailure.LoginError
+            AuthenticationLoginFailure.LoginError
     }
 
-internal fun RepositoryBackendFailure.toLoginFailure(): UseCaseAuthenticationLogin.LoginFailure =
+internal fun RepositoryBackendFailure.toLoginFailure(): AuthenticationLoginFailure =
     when (this) {
-        RepositoryBackendFailure.BackendProblems -> UseCaseAuthenticationLogin.LoginFailure.BackendProblems
-        RepositoryBackendFailure.ConnectionProblems -> UseCaseAuthenticationLogin.LoginFailure.ConnectionProblems
+        RepositoryBackendFailure.BackendProblems -> AuthenticationLoginFailure.BackendProblems
+        RepositoryBackendFailure.ConnectionProblems -> AuthenticationLoginFailure.ConnectionProblems
     }

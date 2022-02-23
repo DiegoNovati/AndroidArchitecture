@@ -2,6 +2,9 @@ package com.elt.passsystem.domain.usecases
 
 import arrow.core.Either
 import com.elt.passsystem.domain.BaseDomainTest
+import com.elt.passsystem.domain.entities.AuthenticationLoginFailure
+import com.elt.passsystem.domain.entities.BaseFailure
+import com.elt.passsystem.domain.entities.UnexpectedError
 import com.elt.passsystem.domain.repositories.IRepositoryAnalytics
 import com.elt.passsystem.domain.repositories.IRepositoryLogger
 import io.mockk.coVerify
@@ -26,8 +29,8 @@ class UseCaseSingleTest : BaseDomainTest() {
     @Test
     fun `WHEN the run is successful THEN it returns the success`() = runBlocking {
         Dispatchers.setMain((Dispatchers.Unconfined))
-        var actual: Either<Failure, Boolean>? = null
-        val onResult = { onResult: Either<Failure, Boolean> ->
+        var actual: Either<AuthenticationLoginFailure, Boolean>? = null
+        val onResult = { onResult: Either<AuthenticationLoginFailure, Boolean> ->
             actual = onResult
         }
 
@@ -56,8 +59,8 @@ class UseCaseSingleTest : BaseDomainTest() {
     fun `WHEN the run returns a failure THEN it returns the failure`() = runBlocking {
         Dispatchers.setMain((Dispatchers.Unconfined))
 
-        var actual: Either<Failure, Boolean>? = null
-        val onResult = { onResult: Either<Failure, Boolean> ->
+        var actual: Either<AuthenticationLoginFailure, Boolean>? = null
+        val onResult = { onResult: Either<AuthenticationLoginFailure, Boolean> ->
             actual = onResult
         }
 
@@ -68,7 +71,6 @@ class UseCaseSingleTest : BaseDomainTest() {
 
         assertNotNull(actual)
         actual?.fold({
-            assertTrue(it is FakeFailureError)
         }) {
             fail("Failure expected")
         }
@@ -99,8 +101,8 @@ class UseCaseSingleTest : BaseDomainTest() {
     fun `WHEN the run raises an exception THEN it returns the exception`() = runBlocking {
         Dispatchers.setMain(Dispatchers.Unconfined)
 
-        var actual: Either<Failure, Boolean>? = null
-        val onResult = { onResult: Either<Failure, Boolean> ->
+        var actual: Either<BaseFailure, Boolean>? = null
+        val onResult = { onResult: Either<BaseFailure, Boolean> ->
             actual = onResult
         }
 
@@ -116,7 +118,7 @@ class UseCaseSingleTest : BaseDomainTest() {
 
         assertNotNull(actual)
         actual?.fold({
-            assertEquals(Failure.UnexpectedError(params), it)
+            assertEquals(UnexpectedError(params), it)
         }) {
             fail("Failure expected")
         }
@@ -198,14 +200,12 @@ class UseCaseSingleTest : BaseDomainTest() {
         confirmVerified(mockRepositoryLogger)
     }
 
-    object FakeFailureError : Failure.FeatureFailure()
-
     class FakeUseCaseSingle(
         repositoryLogger: IRepositoryLogger,
         repositoryAnalytics: IRepositoryAnalytics,
     ) :
-        UseCaseSingle<String, Boolean>(repositoryLogger, repositoryAnalytics) {
-        override suspend fun run(params: String): Either<Failure, Boolean> =
+        UseCaseSingle<String, Boolean, AuthenticationLoginFailure>(repositoryLogger, repositoryAnalytics) {
+        override suspend fun run(params: String): Either<AuthenticationLoginFailure, Boolean> =
             Either.Right(params.isNotEmpty())
     }
 
@@ -213,17 +213,17 @@ class UseCaseSingleTest : BaseDomainTest() {
         repositoryLogger: IRepositoryLogger,
         repositoryAnalytics: IRepositoryAnalytics,
     ) :
-        UseCaseSingle<String, Boolean>(repositoryLogger, repositoryAnalytics) {
-        override suspend fun run(params: String): Either<Failure, Boolean> =
-            Either.Left(FakeFailureError)
+        UseCaseSingle<String, Boolean, AuthenticationLoginFailure>(repositoryLogger, repositoryAnalytics) {
+        override suspend fun run(params: String): Either<AuthenticationLoginFailure, Boolean> =
+            Either.Left(AuthenticationLoginFailure.ConnectionProblems)
     }
 
     class SlowUseCaseSingle(
         repositoryLogger: IRepositoryLogger,
         repositoryAnalytics: IRepositoryAnalytics,
     ) :
-        UseCaseSingle<String, Boolean>(repositoryLogger, repositoryAnalytics) {
-        override suspend fun run(params: String): Either<Failure, Boolean> {
+        UseCaseSingle<String, Boolean, BaseFailure>(repositoryLogger, repositoryAnalytics) {
+        override suspend fun run(params: String): Either<BaseFailure, Boolean> {
             delay(10000)
             return Either.Right(params.isNotEmpty())
         }
@@ -233,8 +233,8 @@ class UseCaseSingleTest : BaseDomainTest() {
         repositoryLogger: IRepositoryLogger,
         repositoryAnalytics: IRepositoryAnalytics,
     ) :
-        UseCaseSingle<Exception, Boolean>(repositoryLogger, repositoryAnalytics) {
-        override suspend fun run(params: Exception): Either<Failure, Boolean> {
+        UseCaseSingle<Exception, Boolean, BaseFailure>(repositoryLogger, repositoryAnalytics) {
+        override suspend fun run(params: Exception): Either<BaseFailure, Boolean> {
             throw params
         }
     }

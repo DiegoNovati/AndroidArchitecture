@@ -1,6 +1,7 @@
 package com.elt.passsystem.domain.usecases
 
 import arrow.core.Either
+import com.elt.passsystem.domain.entities.UnexpectedError
 import com.elt.passsystem.domain.repositories.IRepositoryAnalytics
 import com.elt.passsystem.domain.repositories.IRepositoryLogger
 import kotlinx.coroutines.*
@@ -9,25 +10,22 @@ import kotlinx.coroutines.flow.catch
 
 object NoParams
 
-sealed class Failure {
-    data class UnexpectedError(val e: Throwable) : Failure()
-    abstract class FeatureFailure : Failure()
-}
-
 /**
  * Base class for every use case implementing a request/response case or, in other words, a use
  * case that ends when the response has been returned
+ *
+ * The Failure type must be a 'sealed interface' (see Failures.kt file)
  */
-abstract class UseCaseSingle<Params, Result>(
+abstract class UseCaseSingle<Params, Result, Failure>(
     repositoryLogger: IRepositoryLogger,
     repositoryAnalytics: IRepositoryAnalytics,
-) : UseCaseBase<Params, Result>(repositoryLogger, repositoryAnalytics)
-        where Params : Any, Result : Any {
+) : UseCaseBase<Params, Result, Failure>(repositoryLogger, repositoryAnalytics)
+        where Params : Any, Result : Any, Failure : Any {
 
     abstract suspend fun run(params: Params): Either<Failure, Result>
 
     override suspend fun exec(
-        useCaseBase: UseCaseBase<Params, Result>,
+        useCaseBase: UseCaseBase<Params, Result, Failure>,
         params: Params,
         coroutineScope: CoroutineScope,
         onResult: (result: Either<Failure, Result>) -> Unit
@@ -49,16 +47,16 @@ abstract class UseCaseSingle<Params, Result>(
  * Base class for every use case that returns periodically a value (i.e.: Internet connection status
  * (online/offline)). The use case never ends, it must be cancelled
  */
-abstract class UseCaseStream<Params, Result>(
+abstract class UseCaseStream<Params, Result, Failure>(
     repositoryLogger: IRepositoryLogger,
     repositoryAnalytics: IRepositoryAnalytics,
-) : UseCaseBase<Params, Result>(repositoryLogger, repositoryAnalytics)
-        where Params : Any, Result : Any {
+) : UseCaseBase<Params, Result, Failure>(repositoryLogger, repositoryAnalytics)
+        where Params : Any, Result : Any, Failure: Any {
 
     abstract suspend fun run(params: Params): Either<Failure, Flow<Result>>
 
     override suspend fun exec(
-        useCaseBase: UseCaseBase<Params, Result>,
+        useCaseBase: UseCaseBase<Params, Result, Failure>,
         params: Params,
         coroutineScope: CoroutineScope,
         onResult: (result: Either<Failure, Result>) -> Unit
@@ -74,7 +72,7 @@ abstract class UseCaseStream<Params, Result>(
                 .catch { exception ->
                     logUnexpectedThrowable(params, exception)
                     coroutineScope.launch(Dispatchers.Main) {
-                        onResult(Either.Left(Failure.UnexpectedError(exception)))
+                        onResult(Either.Left(UnexpectedError(exception) as Failure))
                     }
                 }
                 .collect { value ->
@@ -86,10 +84,10 @@ abstract class UseCaseStream<Params, Result>(
     }
 }
 
-abstract class UseCaseBase<Params, Result>(
+abstract class UseCaseBase<Params, Result, Failure>(
     private val repositoryLogger: IRepositoryLogger,
     private val repositoryAnalytics: IRepositoryAnalytics,
-) where Params : Any, Result : Any {
+) where Params : Any, Result : Any, Failure : Any {
 
     internal suspend fun logError(params: Params, failure: String) {
         repositoryLogger.logError(javaClass.simpleName, params.toString(), failure)
@@ -112,7 +110,7 @@ abstract class UseCaseBase<Params, Result>(
     }
 
     abstract suspend fun exec(
-        useCaseBase: UseCaseBase<Params, Result>,
+        useCaseBase: UseCaseBase<Params, Result, Failure>,
         params: Params,
         coroutineScope: CoroutineScope,
         onResult: (result: Either<Failure, Result>) -> Unit
@@ -132,7 +130,7 @@ abstract class UseCaseBase<Params, Result>(
             } catch (e: Throwable) {
                 logUnexpectedThrowable(params, e)
                 launch(Dispatchers.Main) {
-                    onResult(Either.Left(Failure.UnexpectedError(e)))
+                    onResult(Either.Left(UnexpectedError(e) as Failure))
                 }
             }
         }
