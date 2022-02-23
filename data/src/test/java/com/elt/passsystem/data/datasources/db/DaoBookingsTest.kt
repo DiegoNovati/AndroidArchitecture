@@ -1,12 +1,13 @@
 package com.elt.passsystem.data.datasources.db
 
 import com.elt.passsystem.data.BaseDataDaoTest
-import com.elt.passsystem.data.models.DBBookingStatus
 import com.elt.passsystem.data.models.DBBooking
+import com.elt.passsystem.data.models.DBBookingStatus
 import junit.framework.TestCase.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
+import java.util.*
 
 class DaoBookingsTest : BaseDataDaoTest() {
 
@@ -100,7 +101,7 @@ class DaoBookingsTest : BaseDataDaoTest() {
         daoBookings.insert(bookingList)
         daoBookings.delete(booking)
 
-        assertEquals(bookingList.size-1, daoBookings.count())
+        assertEquals(bookingList.size - 1, daoBookings.count())
         assertNull(daoBookings.getById(booking.id))
     }
 
@@ -128,5 +129,11 @@ class DaoBookingsTest : BaseDataDaoTest() {
     }
 
     private fun createBooking(id: Long): DBBooking =
-        DBBooking(id, "customer $id", DBBookingStatus.Started)
+        DBBooking(
+            id,
+            "customer $id",
+            DBBookingStatus.Started,
+            start = Date(),
+            end = Date(),
+        )
 }

@@ -100,6 +100,8 @@ class ExtensionsBookingTest {
         DBBooking(
             id = id,
             customerBid = "customerBid",
-            status = status
+            status = status,
+            start = Date(),
+            end = Date(),
         )
 }
