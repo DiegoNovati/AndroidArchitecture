@@ -3,8 +3,8 @@ This is a project used to show how the Android App should be organized.
   
 This project has been developed using Android Studio Bumblebee
 
-## Business login
-The business login is implemented using Clean Architecture in two different modules:
+## Business logic
+The business logic is implemented using Clean Architecture in two different modules:
 
 - Domain: it exposes all the use cases used by the presentation layer of the App
 - Data: it implements the repositories defined by the Domain module using the data sources
