@@ -72,6 +72,7 @@ abstract class UseCaseStream<Params, Result, Failure>(
                 .catch { exception ->
                     logUnexpectedThrowable(params, exception)
                     coroutineScope.launch(Dispatchers.Main) {
+                        @Suppress("UNCHECKED_CAST")
                         onResult(Either.Left(UnexpectedError(exception) as Failure))
                     }
                 }
@@ -130,6 +131,7 @@ abstract class UseCaseBase<Params, Result, Failure>(
             } catch (e: Throwable) {
                 logUnexpectedThrowable(params, e)
                 launch(Dispatchers.Main) {
+                    @Suppress("UNCHECKED_CAST")
                     onResult(Either.Left(UnexpectedError(e) as Failure))
                 }
             }
