@@ -32,8 +32,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 sealed class BottomBarRoute(val routeName: String, val isInitialRoute: Boolean = false) {
-    object Bookings : BottomBarRoute("Bookings", true)
-    object Customers : BottomBarRoute("Customers")
+    object Bookings : BottomBarRoute("Bookings")
+    object Customers : BottomBarRoute("Customers", true)
 
     companion object {
         fun getInitialRoute(): BottomBarRoute =

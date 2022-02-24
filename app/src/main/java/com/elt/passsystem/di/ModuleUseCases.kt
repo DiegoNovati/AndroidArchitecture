@@ -1,7 +1,6 @@
 package com.elt.passsystem.di
 
 import com.elt.passsystem.data.DataInterface
-import com.elt.passsystem.domain.repositories.*
 import com.elt.passsystem.domain.usecases.authentication.UseCaseAuthenticationLogin
 import com.elt.passsystem.domain.usecases.authentication.UseCaseAuthenticationLogout
 import com.elt.passsystem.state.GlobalState
@@ -22,49 +21,12 @@ object ModuleUseCases {
 
     @Provides
     @Singleton
-    fun provideRepositoryLogger(): IRepositoryLogger =
-        DataInterface.repositoryLogger
+    fun provideUseCaseAuthenticationLogin(): UseCaseAuthenticationLogin =
+        DataInterface.useCaseAuthenticationLogin
+
 
     @Provides
     @Singleton
-    fun provideRepositoryAnalytics(): IRepositoryAnalytics =
-        DataInterface.repositoryAnalytics
-
-    @Provides
-    @Singleton
-    fun provideRepositoryAuthentication(): IRepositoryAuthentication =
-        DataInterface.repositoryAuthentication
-
-    @Provides
-    @Singleton
-    fun provideRepositoryCustomers(): IRepositoryCustomers =
-        DataInterface.repositoryCustomers
-
-    @Provides
-    @Singleton
-    fun provideRepositoryBookings(): IRepositoryBookings =
-        DataInterface.repositoryBookings
-
-    @Provides
-    fun provideUseCaseAuthenticationLogin(
-        repositoryLogger: IRepositoryLogger,
-        repositoryAnalytics: IRepositoryAnalytics,
-        repositoryAuthentication: IRepositoryAuthentication,
-        repositoryCustomers: IRepositoryCustomers,
-        repositoryBookings: IRepositoryBookings,
-    ): UseCaseAuthenticationLogin =
-        UseCaseAuthenticationLogin(
-            repositoryLogger, repositoryAnalytics, repositoryAuthentication, repositoryCustomers,
-            repositoryBookings
-        )
-
-    @Provides
-    fun provideUseCaseAuthenticationLogout(
-        repositoryLogger: IRepositoryLogger,
-        repositoryAnalytics: IRepositoryAnalytics,
-        repositoryAuthentication: IRepositoryAuthentication,
-    ): UseCaseAuthenticationLogout =
-        UseCaseAuthenticationLogout(
-            repositoryLogger, repositoryAnalytics, repositoryAuthentication
-        )
+    fun provideUseCaseAuthenticationLogout(): UseCaseAuthenticationLogout =
+        DataInterface.useCaseAuthenticationLogout
 }

@@ -10,10 +10,14 @@ import com.elt.passsystem.data.datasources.network.IPassApi
 import com.elt.passsystem.data.datasources.network.createPassApi
 import com.elt.passsystem.data.repositories.*
 import com.elt.passsystem.domain.repositories.*
+import com.elt.passsystem.domain.usecases.authentication.UseCaseAuthenticationLogin
+import com.elt.passsystem.domain.usecases.authentication.UseCaseAuthenticationLogout
 
 /**
- * This object exports the repositories needed by the use cases and avoid the use of any
- * Dependency Injection engine
+ * This object exports the function to initialize the engines used by this module and all the use
+ * cases
+ *
+ * In this module we don't use any Dependency Injection engine becasue it is not needed
  */
 object DataInterface {
 
@@ -31,23 +35,44 @@ object DataInterface {
         passApi = createPassApi(releaseMode)
     }
 
-    val repositoryAnalytics: IRepositoryAnalytics by lazy {
+    /**
+     * Use cases exported by the module
+     */
+
+    val useCaseAuthenticationLogin: UseCaseAuthenticationLogin by lazy {
+        UseCaseAuthenticationLogin(
+            repositoryLogger, repositoryAnalytics, repositoryAuthentication, repositoryCustomers,
+            repositoryBookings
+        )
+    }
+
+    val useCaseAuthenticationLogout: UseCaseAuthenticationLogout by lazy {
+        UseCaseAuthenticationLogout(
+            repositoryLogger, repositoryAnalytics, repositoryAuthentication
+        )
+    }
+
+    /**
+     * Repositories and data sources used by the use cases
+     */
+
+    private val repositoryAnalytics: IRepositoryAnalytics by lazy {
         RepositoryAnalytics(dataSourceAnalytics)
     }
 
-    val repositoryLogger: IRepositoryLogger by lazy {
+    private val repositoryLogger: IRepositoryLogger by lazy {
         RepositoryLogger(dataSourceLogger)
     }
 
-    val repositoryAuthentication: IRepositoryAuthentication by lazy {
+    private val repositoryAuthentication: IRepositoryAuthentication by lazy {
         RepositoryAuthentication(dataSourceBackend)
     }
 
-    val repositoryCustomers: IRepositoryCustomers by lazy {
+    private val repositoryCustomers: IRepositoryCustomers by lazy {
         RepositoryCustomers(dataSourceBackend, dataSourceDatabaseCustomers)
     }
 
-    val repositoryBookings: IRepositoryBookings by lazy {
+    private val repositoryBookings: IRepositoryBookings by lazy {
         RepositoryBookings(dataSourceBackend, dataSourceDatabaseBookings)
     }
 
