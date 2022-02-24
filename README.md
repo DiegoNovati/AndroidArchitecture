@@ -1,9 +1,9 @@
-* Android Architecture
+# Android Architecture
 This is a project used to show how the Android App should be organized.
   
-This project has been developed using Android Studio Bumblebee | 2021.1.1 Patch 1
+This project has been developed using Android Studio Bumblebee
 
-** Business login
+## Business login
 The business login is implemented using Clean Architecture in two different modules:
 
 - Domain: it exposes all the use cases used by the presentation layer of the App
@@ -15,7 +15,7 @@ module is a java/kotlin library (the developer cannot add any Android dependency
 The data module is an Android library and it has full access to the Android SDK and Android 
 libraries.
 
-** Presentation logic
+## Presentation logic
 The presentation logic is implemented using Jetpack Compose and following the MVVM Architecture:
 
 - Model: the model is implemented in the domain module using Clean Architecture
