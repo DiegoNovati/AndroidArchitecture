@@ -26,27 +26,34 @@ import com.elt.passsystem.widgets.TextError
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
-    var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val stateValue = viewModel.state.observeAsState(
+        LoginViewModel.LoginState(
+            connected = true,
+            loggingIn = false,
+            username = "",
+            errorType = LoginViewModel.ErrorType.NoError,
+        )
+    ).value
 
     val focusManager = LocalFocusManager.current
 
-    val error = when (val stateValue =
-        viewModel.state.observeAsState(LoginViewModel.LoginState.NoError).value) {
-        LoginViewModel.LoginState.NoError -> ""
-        LoginViewModel.LoginState.LoginError -> stringResource(id = R.string.loginErrorLoginError)
-        LoginViewModel.LoginState.BackendProblems -> stringResource(id = R.string.loginErrorBackendProblems)
-        LoginViewModel.LoginState.ConnectionProblems -> stringResource(id = R.string.loginErrorConnectionProblems)
-        is LoginViewModel.LoginState.UnexpectedProblems -> stateValue.error
+    val errorMessage = when (stateValue.errorType) {
+        LoginViewModel.ErrorType.NoError -> ""
+        LoginViewModel.ErrorType.ConnectionError -> stringResource(id = R.string.loginErrorConnectionProblems)
+        LoginViewModel.ErrorType.BackendError -> stringResource(id = R.string.loginErrorBackendProblems)
+        LoginViewModel.ErrorType.LoginError -> stringResource(id = R.string.loginErrorLoginError)
+        is LoginViewModel.ErrorType.UnexpectedError -> stateValue.errorType.error
     }
 
     LoginScreenUI(
-        username = username,
+        username = stateValue.username,
         password = password,
-        error = error,
+        error = errorMessage,
+        enabled = !stateValue.loggingIn,
+        connected = stateValue.connected,
         onUsernameChanged = {
-            username = it
-            viewModel.resetError()
+            viewModel.updateUsername(it)
         },
         onPasswordChanged = {
             password = it
@@ -55,15 +62,13 @@ fun LoginScreen(
         onLogin = {
             viewModel.resetError()
             viewModel.login(
-                username = username,
                 password = password,
             )
         },
         onReset = {
-            username = ""
             password = ""
             focusManager.clearFocus()
-            viewModel.resetError()
+            viewModel.resetData()
         }
     )
 }
@@ -72,16 +77,19 @@ fun LoginScreen(
 fun LoginScreenUI(
     username: String,
     password: String,
+    enabled: Boolean,
+    connected: Boolean,
     error: String,
     onUsernameChanged: (String) -> Unit,
     onPasswordChanged: (String) -> Unit,
     onLogin: () -> Unit,
     onReset: () -> Unit
 ) {
+    val connectedText = if (!connected) stringResource(id = R.string.connectionMissing) else ""
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(id = R.string.loginTitle)) }
+                title = { Text(text = stringResource(id = R.string.loginTitle, connectedText)) }
             )
         }
     ) {
@@ -105,6 +113,7 @@ fun LoginScreenUI(
                         )
                     },
                     value = username,
+                    enabled = enabled,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     onValueChange = { onUsernameChanged(it) }
                 )
@@ -118,6 +127,7 @@ fun LoginScreenUI(
                         )
                     },
                     value = password,
+                    enabled = enabled,
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     onValueChange = { onPasswordChanged(it) }
@@ -126,8 +136,8 @@ fun LoginScreenUI(
                     modifier = Modifier
                         .padding(bottom = 16.dp)
                         .fillMaxWidth(),
-                    enabled = username.isNotEmpty() && password.isNotEmpty(),
                     stringId = R.string.loginLoginButton,
+                    enabled = enabled && username.isNotEmpty() && password.isNotEmpty(),
                     onClick = { onLogin() }
                 )
                 ButtonRoundedEdgesSecondary(
@@ -135,6 +145,7 @@ fun LoginScreenUI(
                         .padding(bottom = 16.dp)
                         .fillMaxWidth(),
                     stringId = R.string.loginLoginReset,
+                    enabled = enabled,
                     onClick = { onReset() }
                 )
                 TextError(
@@ -150,7 +161,7 @@ fun LoginScreenUI(
 
 @Composable
 @Preview(showBackground = true)
-fun LoginScreenUIPreview() {
+fun LoginScreenUIEnabledPreview() {
     AndroidArchitectureTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -160,6 +171,54 @@ fun LoginScreenUIPreview() {
                 username = "user01",
                 password = "password",
                 error = "",
+                enabled = true,
+                connected = true,
+                onUsernameChanged = {},
+                onPasswordChanged = {},
+                onLogin = {},
+                onReset = {},
+            )
+        }
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun LoginScreenUIDisabledPreview() {
+    AndroidArchitectureTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colors.background
+        ) {
+            LoginScreenUI(
+                username = "user01",
+                password = "password",
+                error = "",
+                enabled = false,
+                connected = true,
+                onUsernameChanged = {},
+                onPasswordChanged = {},
+                onLogin = {},
+                onReset = {},
+            )
+        }
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun LoginScreenUIDisconnectedPreview() {
+    AndroidArchitectureTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colors.background
+        ) {
+            LoginScreenUI(
+                username = "user01",
+                password = "password",
+                error = "",
+                enabled = true,
+                connected = false,
                 onUsernameChanged = {},
                 onPasswordChanged = {},
                 onLogin = {},

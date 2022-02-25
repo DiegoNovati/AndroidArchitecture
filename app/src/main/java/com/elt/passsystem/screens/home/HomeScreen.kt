@@ -67,14 +67,17 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val navController = rememberNavController()
-    val loginResult = viewModel.state.observeAsState(
+    val stateValue = viewModel.state.observeAsState(
+        HomeViewModel.HomeState(
+        connected = true,
         LoginResult("", listOf(), listOf())
-    ).value
+    )).value
 
     HomeScreenUI(
         navController = navController,
-        customerList = loginResult.customerList,
-        bookingList = loginResult.bookingList,
+        customerList = stateValue.data.customerList,
+        bookingList = stateValue.data.bookingList,
+        connected = stateValue.connected,
         onLogout = {
             viewModel.logout()
         }
@@ -86,12 +89,16 @@ fun HomeScreenUI(
     navController: NavHostController,
     customerList: List<Customer>,
     bookingList: List<Booking>,
+    connected: Boolean,
     onLogout: () -> Unit,
 ) {
+    val connectedText = if (!connected) stringResource(id = R.string.connectionMissing) else ""
+
     Scaffold(
         topBar = {
             HomeTopBar(
-                onLogout = onLogout
+                connectedText = connectedText,
+                onLogout = onLogout,
             )
         },
         bottomBar = {
@@ -110,12 +117,13 @@ fun HomeScreenUI(
 
 @Composable
 fun HomeTopBar(
+    connectedText: String,
     onLogout: () -> Unit,
 ) {
     TopAppBar(
         title = {
             Text(
-                text = stringResource(id = R.string.homeTitle),
+                text = stringResource(id = R.string.homeTitle, connectedText),
             )
         },
         actions = {
@@ -219,6 +227,32 @@ fun HomeScreenUIPreview() {
             navController = navController,
             customerList = customerList,
             bookingList = bookingList,
+            connected = true,
+            onLogout = {}
+        )
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun HomeScreenUIDisconnectedPreview() {
+    val navController = rememberNavController()
+    val customerList = listOf(
+        Customer("1", "Mr. John", "25 Oxford Circus, London"),
+        Customer("2", "Mrs. Jane", "4 Piccadilly Circus, London"),
+    )
+    val formatTime = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+    val bookingList = listOf(
+        Booking(1, "1", BookingStatus.Scheduled, formatTime.parse("08:00:00")!!, formatTime.parse("12:00:00")!!,),
+        Booking(2, "1", BookingStatus.Started, formatTime.parse("14:00:00")!!, formatTime.parse("16:00:00")!!,),
+        Booking(3, "1", BookingStatus.Completed, formatTime.parse("18:00:00")!!, formatTime.parse("20:00:00")!!,),
+    )
+    AndroidArchitectureTheme {
+        HomeScreenUI(
+            navController = navController,
+            customerList = customerList,
+            bookingList = bookingList,
+            connected = false,
             onLogout = {}
         )
     }

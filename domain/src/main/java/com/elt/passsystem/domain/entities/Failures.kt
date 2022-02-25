@@ -11,7 +11,11 @@ data class UnexpectedError(val e: Throwable) : BaseFailure()
  * Warning: BaseFailure must inherit from EVERY sealed interface used by each use cases. In case of
  *          missing, the App will crash when the use case have to deal with an unexpected exception.
  */
-sealed class BaseFailure: AuthenticationLoginFailure
+sealed class BaseFailure: NoFailure, AuthenticationLoginFailure
+
+sealed interface NoFailure {
+    object NoError: NoFailure
+}
 
 sealed interface AuthenticationLoginFailure {
     object ConnectionProblems : AuthenticationLoginFailure

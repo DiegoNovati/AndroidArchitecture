@@ -1,6 +1,7 @@
 package com.elt.passsystem.data
 
 import android.content.Context
+import android.net.ConnectivityManager
 import com.elt.passsystem.data.datasources.*
 import com.elt.passsystem.data.datasources.console.ConsoleApi
 import com.elt.passsystem.data.datasources.console.IConsoleApi
@@ -8,10 +9,15 @@ import com.elt.passsystem.data.datasources.db.PassDatabase
 import com.elt.passsystem.data.datasources.db.openDatabase
 import com.elt.passsystem.data.datasources.network.IPassApi
 import com.elt.passsystem.data.datasources.network.createPassApi
+import com.elt.passsystem.data.datasources.networkMonitor.ConnectivityChecker
+import com.elt.passsystem.data.datasources.networkMonitor.ConnectivityMonitorCallback
+import com.elt.passsystem.data.datasources.networkMonitor.IConnectivityChecker
+import com.elt.passsystem.data.datasources.networkMonitor.IConnectivityMonitorCallback
 import com.elt.passsystem.data.repositories.*
 import com.elt.passsystem.domain.repositories.*
 import com.elt.passsystem.domain.usecases.authentication.UseCaseAuthenticationLogin
 import com.elt.passsystem.domain.usecases.authentication.UseCaseAuthenticationLogout
+import com.elt.passsystem.domain.usecases.networkMonitor.UseCaseNetworkMonitor
 
 /**
  * This object exports the function to initialize the engines used by this module and all the use
@@ -20,6 +26,11 @@ import com.elt.passsystem.domain.usecases.authentication.UseCaseAuthenticationLo
  * In this module we don't use any Dependency Injection engine becasue it is not needed
  */
 object DataInterface {
+
+    /**
+     * The Application context can be kept because it cannot change.
+     */
+    private lateinit var applicationContext: Context
 
     private lateinit var passDatabase: PassDatabase
 
@@ -31,6 +42,7 @@ object DataInterface {
      * This method must be called by the Application in the onCreate method
      */
     fun initDataLayer(applicationContext: Context, releaseMode: Boolean) {
+        this.applicationContext = applicationContext
         passDatabase = openDatabase(applicationContext)
         passApi = createPassApi(releaseMode)
     }
@@ -38,6 +50,10 @@ object DataInterface {
     /**
      * Use cases exported by the module
      */
+
+    val useCaseNetworkMonitor: UseCaseNetworkMonitor by lazy {
+        UseCaseNetworkMonitor(repositoryLogger, repositoryAnalytics, repositoryNetworkMonitor)
+    }
 
     val useCaseAuthenticationLogin: UseCaseAuthenticationLogin by lazy {
         UseCaseAuthenticationLogin(
@@ -62,6 +78,10 @@ object DataInterface {
 
     private val repositoryLogger: IRepositoryLogger by lazy {
         RepositoryLogger(dataSourceLogger)
+    }
+
+    private val repositoryNetworkMonitor: IRepositoryNetworkMonitor by lazy {
+        RepositoryNetworkMonitor(dataSourceConnectivityMonitor)
     }
 
     private val repositoryAuthentication: IRepositoryAuthentication by lazy {
@@ -98,5 +118,21 @@ object DataInterface {
 
     private val dataSourceDatabaseBookings: IDataSourceDatabaseBookings by lazy {
         DataSourceDatabaseBookings(passDatabase)
+    }
+
+    private val dataSourceConnectivityMonitor: IDataSourceConnectivityMonitor by lazy {
+        DataSourceConnectivityMonitor(connectivityChecker, connectivityMonitorCallback)
+    }
+
+    private val connectivityChecker: IConnectivityChecker by lazy {
+        ConnectivityChecker(connectivityManager)
+    }
+
+    private val connectivityMonitorCallback: IConnectivityMonitorCallback by lazy {
+        ConnectivityMonitorCallback(connectivityManager)
+    }
+
+    private val connectivityManager: ConnectivityManager by lazy {
+        applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
 }

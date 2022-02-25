@@ -3,6 +3,7 @@ package com.elt.passsystem.di
 import com.elt.passsystem.data.DataInterface
 import com.elt.passsystem.domain.usecases.authentication.UseCaseAuthenticationLogin
 import com.elt.passsystem.domain.usecases.authentication.UseCaseAuthenticationLogout
+import com.elt.passsystem.domain.usecases.networkMonitor.UseCaseNetworkMonitor
 import com.elt.passsystem.state.GlobalState
 import dagger.Module
 import dagger.Provides
@@ -18,6 +19,11 @@ object ModuleUseCases {
     @Singleton
     fun provideGlobalState(): GlobalState =
         GlobalState()
+
+    @Provides
+    @Singleton
+    fun provideUseCaseNetworkMonitor(): UseCaseNetworkMonitor =
+        DataInterface.useCaseNetworkMonitor
 
     @Provides
     @Singleton
