@@ -75,6 +75,18 @@ dependencies {
     kapt "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
 
+    // Flipper
+    def flipperVersion = "0.136.0"
+    releaseApi "com.facebook.flipper:flipper-noop:$flipperVersion"
+
+    // ********** Added only in the DEBUG variant **********
+
+    debugApi "com.facebook.soloader:soloader:0.10.3"
+    debugApi "com.facebook.flipper:flipper:$flipperVersion"
+    debugApi "com.facebook.flipper:flipper-network-plugin:$flipperVersion"
+    debugImplementation "com.facebook.flipper:flipper-leakcanary2-plugin:$flipperVersion"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:2.8.1"
+    
     // ********** Testing **********
 
     // JUnit

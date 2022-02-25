@@ -5,8 +5,9 @@ import com.elt.passsystem.BuildConfig
 import com.elt.passsystem.data.DataInterface
 import dagger.hilt.android.HiltAndroidApp
 
+
 @HiltAndroidApp
-class PassApplication: MultiDexApplication() {
+class PassApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()

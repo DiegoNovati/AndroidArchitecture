@@ -4,6 +4,8 @@ import com.elt.passsystem.data.BuildConfig
 import com.elt.passsystem.data.models.NetAuthenticateResponse
 import com.elt.passsystem.data.models.NetBookingsResponse
 import com.elt.passsystem.data.models.NetCustomersResponse
+import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
+import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -15,22 +17,22 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import java.util.concurrent.TimeUnit
 
-fun createPassApi(releaseMode: Boolean): IPassApi =
-    getRetrofit(BuildConfig.BACKEND_URL, releaseMode).create(IPassApi::class.java)
+fun createPassApi(releaseMode: Boolean, networkFlipperPlugin: NetworkFlipperPlugin): IPassApi =
+    getRetrofit(BuildConfig.BACKEND_URL, releaseMode, networkFlipperPlugin).create(IPassApi::class.java)
 
 private val gson = GsonBuilder()
     .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
     .create()
 
-internal fun getRetrofit(url: String, releaseMode: Boolean): Retrofit =
+internal fun getRetrofit(url: String, releaseMode: Boolean, networkFlipperPlugin: NetworkFlipperPlugin): Retrofit =
     Retrofit
         .Builder()
         .baseUrl(url)
-        .client(getHttpClient(releaseMode))
+        .client(getHttpClient(releaseMode, networkFlipperPlugin))
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
-private fun getHttpClient(releaseMode: Boolean): OkHttpClient {
+private fun getHttpClient(releaseMode: Boolean, networkFlipperPlugin: NetworkFlipperPlugin): OkHttpClient {
     val httpLoggingInterceptor = HttpLoggingInterceptor()
     httpLoggingInterceptor.level = if (releaseMode) HttpLoggingInterceptor.Level.NONE else HttpLoggingInterceptor.Level.BODY
 
@@ -40,6 +42,7 @@ private fun getHttpClient(releaseMode: Boolean): OkHttpClient {
         //.cache(Cache(context.cacheDir, (1024*1024*50).toLong()))
         //.addNetworkInterceptor(CustomHttp304CodeInterceptor())
         .addInterceptor(httpLoggingInterceptor)
+        .addInterceptor(FlipperOkhttpInterceptor(networkFlipperPlugin))
         .build()
 }
 

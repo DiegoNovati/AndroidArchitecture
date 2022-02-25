@@ -13,11 +13,13 @@ import com.elt.passsystem.data.datasources.networkMonitor.ConnectivityChecker
 import com.elt.passsystem.data.datasources.networkMonitor.ConnectivityMonitorCallback
 import com.elt.passsystem.data.datasources.networkMonitor.IConnectivityChecker
 import com.elt.passsystem.data.datasources.networkMonitor.IConnectivityMonitorCallback
+import com.elt.passsystem.data.external.initFlipper
 import com.elt.passsystem.data.repositories.*
 import com.elt.passsystem.domain.repositories.*
 import com.elt.passsystem.domain.usecases.authentication.UseCaseAuthenticationLogin
 import com.elt.passsystem.domain.usecases.authentication.UseCaseAuthenticationLogout
 import com.elt.passsystem.domain.usecases.networkMonitor.UseCaseNetworkMonitor
+import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 
 /**
  * This object exports the function to initialize the engines used by this module and all the use
@@ -43,8 +45,11 @@ object DataInterface {
      */
     fun initDataLayer(applicationContext: Context, releaseMode: Boolean) {
         this.applicationContext = applicationContext
+
+        initFlipper(applicationContext, releaseMode, networkFlipperPlugin)
+
         passDatabase = openDatabase(applicationContext)
-        passApi = createPassApi(releaseMode)
+        passApi = createPassApi(releaseMode, networkFlipperPlugin)
     }
 
     /**
@@ -134,5 +139,9 @@ object DataInterface {
 
     private val connectivityManager: ConnectivityManager by lazy {
         applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
+
+    private val networkFlipperPlugin: NetworkFlipperPlugin by lazy {
+        NetworkFlipperPlugin()
     }
 }
