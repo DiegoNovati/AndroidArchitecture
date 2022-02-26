@@ -16,6 +16,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
 
+        buildConfigField "String", "BACKEND_URL", '"https://qaappapi.passgenius.com"'
+
         kapt {
             arguments {
                 arg("room.schemaLocation", "$projectDir/schemas")
@@ -25,11 +27,8 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField "String", "BACKEND_URL", '"https://qaappapi.passgenius.com"'
         }
         release {
-            buildConfigField "String", "BACKEND_URL", '"https://api.passgenius.com"'
-
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -71,19 +70,20 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 
     // Room
-    def roomVersion = '2.4.1'
+    def roomVersion = '2.4.2'
     kapt "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
 
     // Flipper
-    def flipperVersion = "0.136.0"
-    releaseApi "com.facebook.flipper:flipper-noop:$flipperVersion"
+    releaseImplementation "com.github.theGlenn:flipper-android-no-op:0.9.0"
 
     // ********** Added only in the DEBUG variant **********
 
-    debugApi "com.facebook.soloader:soloader:0.10.3"
-    debugApi "com.facebook.flipper:flipper:$flipperVersion"
-    debugApi "com.facebook.flipper:flipper-network-plugin:$flipperVersion"
+    // Flipper
+    def flipperVersion = "0.136.0"
+    debugImplementation "com.facebook.soloader:soloader:0.10.3"
+    debugImplementation "com.facebook.flipper:flipper:$flipperVersion"
+    debugImplementation "com.facebook.flipper:flipper-network-plugin:$flipperVersion"
     debugImplementation "com.facebook.flipper:flipper-leakcanary2-plugin:$flipperVersion"
     debugImplementation "com.squareup.leakcanary:leakcanary-android:2.8.1"
     

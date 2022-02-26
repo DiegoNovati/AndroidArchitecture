@@ -1,6 +1,7 @@
 package com.elt.passsystem.data.external
 
 import android.content.Context
+import com.elt.passsystem.data.BuildConfig
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.plugins.crashreporter.CrashReporterPlugin
@@ -11,8 +12,8 @@ import com.facebook.flipper.plugins.leakcanary2.LeakCanary2FlipperPlugin
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.facebook.soloader.SoLoader
 
-fun initFlipper(applicationContext: Context, releaseMode: Boolean, networkFlipperPlugin: NetworkFlipperPlugin) {
-    if (!releaseMode && FlipperUtils.shouldEnableFlipper(applicationContext)) {
+fun initFlipper(applicationContext: Context, networkFlipperPlugin: NetworkFlipperPlugin) {
+    if (BuildConfig.DEBUG && FlipperUtils.shouldEnableFlipper(applicationContext)) {
 
         SoLoader.init(applicationContext, false)
 

@@ -25,7 +25,7 @@ import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
  * This object exports the function to initialize the engines used by this module and all the use
  * cases
  *
- * In this module we don't use any Dependency Injection engine becasue it is not needed
+ * In this module we don't use any Dependency Injection engine because it is not needed
  */
 object DataInterface {
 
@@ -46,7 +46,7 @@ object DataInterface {
     fun initDataLayer(applicationContext: Context, releaseMode: Boolean) {
         this.applicationContext = applicationContext
 
-        initFlipper(applicationContext, releaseMode, networkFlipperPlugin)
+        initFlipper(applicationContext, networkFlipperPlugin)
 
         passDatabase = openDatabase(applicationContext)
         passApi = createPassApi(releaseMode, networkFlipperPlugin)

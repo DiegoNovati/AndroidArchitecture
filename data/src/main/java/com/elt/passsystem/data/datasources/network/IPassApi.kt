@@ -17,14 +17,14 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import java.util.concurrent.TimeUnit
 
-fun createPassApi(releaseMode: Boolean, networkFlipperPlugin: NetworkFlipperPlugin): IPassApi =
+fun createPassApi(releaseMode: Boolean, networkFlipperPlugin: NetworkFlipperPlugin? = null): IPassApi =
     getRetrofit(BuildConfig.BACKEND_URL, releaseMode, networkFlipperPlugin).create(IPassApi::class.java)
 
 private val gson = GsonBuilder()
     .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
     .create()
 
-internal fun getRetrofit(url: String, releaseMode: Boolean, networkFlipperPlugin: NetworkFlipperPlugin): Retrofit =
+internal fun getRetrofit(url: String, releaseMode: Boolean, networkFlipperPlugin: NetworkFlipperPlugin? = null): Retrofit =
     Retrofit
         .Builder()
         .baseUrl(url)
@@ -32,18 +32,22 @@ internal fun getRetrofit(url: String, releaseMode: Boolean, networkFlipperPlugin
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
-private fun getHttpClient(releaseMode: Boolean, networkFlipperPlugin: NetworkFlipperPlugin): OkHttpClient {
+private fun getHttpClient(releaseMode: Boolean, networkFlipperPlugin: NetworkFlipperPlugin? = null): OkHttpClient {
     val httpLoggingInterceptor = HttpLoggingInterceptor()
     httpLoggingInterceptor.level = if (releaseMode) HttpLoggingInterceptor.Level.NONE else HttpLoggingInterceptor.Level.BODY
 
-    return OkHttpClient.Builder()
+    val builder = OkHttpClient.Builder()
         .connectTimeout(10, TimeUnit.SECONDS)
         .readTimeout(10, TimeUnit.SECONDS)
         //.cache(Cache(context.cacheDir, (1024*1024*50).toLong()))
         //.addNetworkInterceptor(CustomHttp304CodeInterceptor())
         .addInterceptor(httpLoggingInterceptor)
-        .addInterceptor(FlipperOkhttpInterceptor(networkFlipperPlugin))
-        .build()
+
+    networkFlipperPlugin?.let {
+        builder.addInterceptor(FlipperOkhttpInterceptor(it))
+    }
+
+    return builder.build()
 }
 
 interface IPassApi {
