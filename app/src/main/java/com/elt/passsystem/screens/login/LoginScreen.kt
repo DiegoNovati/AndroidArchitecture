@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -16,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.elt.passsystem.R
+import com.elt.passsystem.screens.LoginScreenTestTag
 import com.elt.passsystem.ui.theme.AndroidArchitectureTheme
 import com.elt.passsystem.widgets.ButtonRoundedEdgesPrimary
 import com.elt.passsystem.widgets.ButtonRoundedEdgesSecondary
@@ -89,7 +91,12 @@ fun LoginScreenUI(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(id = R.string.loginTitle, connectedText)) }
+                title = {
+                    Text(
+                        modifier = Modifier.testTag(LoginScreenTestTag.TitleText.name),
+                        text = stringResource(id = R.string.loginTitle, connectedText),
+                    )
+                }
             )
         }
     ) {
@@ -106,10 +113,11 @@ fun LoginScreenUI(
             ) {
                 OutlinedTextField(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .testTag(LoginScreenTestTag.UsernameTextField.name),
                     label = {
                         TextBody(
-                            text = stringResource(id = R.string.loginInputUsername)
+                            text = stringResource(id = R.string.loginInputUsername),
                         )
                     },
                     value = username,
@@ -120,7 +128,8 @@ fun LoginScreenUI(
                 OutlinedTextField(
                     modifier = Modifier
                         .padding(bottom = 16.dp)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .testTag(LoginScreenTestTag.PasswordTextField.name),
                     label = {
                         TextBody(
                             text = stringResource(id = R.string.loginInputPassword)
@@ -132,18 +141,18 @@ fun LoginScreenUI(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     onValueChange = { onPasswordChanged(it) }
                 )
-                ButtonRoundedEdgesPrimary(
-                    modifier = Modifier
-                        .padding(bottom = 16.dp)
-                        .fillMaxWidth(),
+                ButtonRoundedEdgesPrimary(modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .fillMaxWidth()
+                    .testTag(LoginScreenTestTag.LoginButton.name),
                     stringId = R.string.loginLoginButton,
                     enabled = enabled && username.isNotEmpty() && password.isNotEmpty(),
-                    onClick = { onLogin() }
-                )
+                    onClick = { onLogin() })
                 ButtonRoundedEdgesSecondary(
                     modifier = Modifier
                         .padding(bottom = 16.dp)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .testTag(LoginScreenTestTag.ResetButton.name),
                     stringId = R.string.loginLoginReset,
                     enabled = enabled,
                     onClick = { onReset() }
@@ -151,7 +160,8 @@ fun LoginScreenUI(
                 TextError(
                     modifier = Modifier
                         .padding(bottom = 16.dp)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .testTag(LoginScreenTestTag.ErrorText.name),
                     text = error,
                 )
             }
