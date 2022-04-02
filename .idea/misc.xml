@@ -3,11 +3,20 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="../../../../../layout/compose-model-1645954873674.xml" value="0.23668639053254437" />
+        <entry key="../../../../../layout/compose-model-1648891888445.xml" value="0.1436111111111111" />
+        <entry key="../../../../../layout/compose-model-1648891956878.xml" value="0.2962962962962963" />
+        <entry key="../../../../../layout/compose-model-1648891959749.xml" value="0.2962962962962963" />
+        <entry key="../../../../../layout/compose-model-1648891960990.xml" value="0.2161371237458194" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="EntryPointsManager">
+    <list size="2">
+      <item index="0" class="java.lang.String" itemvalue="dagger.Binds" />
+      <item index="1" class="java.lang.String" itemvalue="dagger.Module" />
+    </list>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

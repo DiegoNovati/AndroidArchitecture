@@ -21,33 +21,34 @@ class HomeViewModel @Inject constructor(
     private val globalState: GlobalState,
 ) : ViewModel() {
 
-    data class HomeState(
-        val connected: Boolean,
-        val data: LoginResult,
+    data class State(
+        val connected: Boolean = false,
+        val data: LoginResult = LoginResult(
+            officeBid = "",
+            customerList = listOf(),
+            bookingList = listOf(),
+        ),
     )
 
-    private val _state: MutableLiveData<HomeState> by lazy {
-        MutableLiveData()
-    }
-    val state: LiveData<HomeState> = _state
-
-    private var homeState = HomeState(
-        connected = true,
-        data = LoginResult("", listOf(), listOf()),
-    )
+    private var localState = State()
+    private val _state = MutableLiveData<State>()
+    val state: LiveData<State> = _state
 
     init {
         serviceActivityBus.registerBackButtonPressedListener {
             logout()
         }
         serviceActivityBus.registerConnectivityStateChanged {
-            updateState(homeState.copy(connected = it))
+            localState = localState.copy(connected = it)
+            updateState()
         }
         globalState.loginResult?.let {
-            updateState(homeState.copy(data = it))
+            localState = localState.copy(data = it)
+            updateState()
         }
 
-        updateState(homeState.copy(connected = serviceActivityBus.getConnectivityState()))
+        localState = localState.copy(connected = serviceActivityBus.getConnectivityState())
+        updateState()
     }
 
     override fun onCleared() {
@@ -61,9 +62,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun updateState(homeState: HomeState) {
-        this.homeState = homeState
-
-        _state.value = homeState
+    private fun updateState() {
+        _state.value = localState
     }
 }

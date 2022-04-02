@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.elt.passsystem.R
-import com.elt.passsystem.screens.LoginScreenTestTag
+import com.elt.passsystem.extensions.toErrorMessage
 import com.elt.passsystem.ui.theme.AndroidArchitectureTheme
 import com.elt.passsystem.widgets.ButtonRoundedEdgesPrimary
 import com.elt.passsystem.widgets.ButtonRoundedEdgesSecondary
@@ -29,44 +29,34 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     var password by remember { mutableStateOf("") }
-    val stateValue = viewModel.state.observeAsState(
-        LoginViewModel.LoginState(
-            connected = true,
-            loggingIn = false,
-            username = "",
-            errorType = LoginViewModel.ErrorType.NoError,
-        )
-    ).value
+
+    val username: String
+    val enabled: Boolean
+    val connected: Boolean
+    var errorMessage = ""
+    viewModel.state.observeAsState(LoginViewModel.State()).value.apply {
+        username = this.username
+        enabled = !this.loggingIn
+        connected = this.connected
+        this.authenticationLoginFailure?.let {
+            errorMessage = it.toErrorMessage()
+        }
+    }
 
     val focusManager = LocalFocusManager.current
 
-    val errorMessage = when (stateValue.errorType) {
-        LoginViewModel.ErrorType.NoError -> ""
-        LoginViewModel.ErrorType.ConnectionError -> stringResource(id = R.string.loginErrorConnectionProblems)
-        LoginViewModel.ErrorType.BackendError -> stringResource(id = R.string.loginErrorBackendProblems)
-        LoginViewModel.ErrorType.LoginError -> stringResource(id = R.string.loginErrorLoginError)
-        is LoginViewModel.ErrorType.UnexpectedError -> stateValue.errorType.error
-    }
-
     LoginScreenUI(
-        username = stateValue.username,
+        username = username,
         password = password,
         error = errorMessage,
-        enabled = !stateValue.loggingIn,
-        connected = stateValue.connected,
-        onUsernameChanged = {
-            viewModel.updateUsername(it)
-        },
+        enabled = enabled,
+        connected = connected,
+        onUsernameChanged = { viewModel.updateUsername(it) },
         onPasswordChanged = {
             password = it
             viewModel.resetError()
         },
-        onLogin = {
-            viewModel.resetError()
-            viewModel.login(
-                password = password,
-            )
-        },
+        onLogin = { viewModel.login(password) },
         onReset = {
             password = ""
             focusManager.clearFocus()

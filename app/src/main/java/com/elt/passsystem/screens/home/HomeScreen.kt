@@ -26,7 +26,6 @@ import com.elt.passsystem.R
 import com.elt.passsystem.domain.entities.Booking
 import com.elt.passsystem.domain.entities.BookingStatus
 import com.elt.passsystem.domain.entities.Customer
-import com.elt.passsystem.domain.entities.LoginResult
 import com.elt.passsystem.ui.theme.AndroidArchitectureTheme
 import java.text.SimpleDateFormat
 import java.util.*
@@ -67,20 +66,22 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val navController = rememberNavController()
-    val stateValue = viewModel.state.observeAsState(
-        HomeViewModel.HomeState(
-        connected = true,
-        LoginResult("", listOf(), listOf())
-    )).value
+
+    val connected: Boolean
+    val customerList: List<Customer>
+    val bookingList: List<Booking>
+    viewModel.state.observeAsState(HomeViewModel.State()).value.apply {
+        connected = this.connected
+        customerList = this.data.customerList
+        bookingList = this.data.bookingList
+    }
 
     HomeScreenUI(
         navController = navController,
-        customerList = stateValue.data.customerList,
-        bookingList = stateValue.data.bookingList,
-        connected = stateValue.connected,
-        onLogout = {
-            viewModel.logout()
-        }
+        customerList = customerList,
+        bookingList = bookingList,
+        connected = connected,
+        onLogout = { viewModel.logout() }
     )
 }
 

@@ -2,7 +2,6 @@ package com.elt.passsystem.screens.login
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.elt.passsystem.extensions.*
-import com.elt.passsystem.screens.LoginScreenTestTag
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule

@@ -4,11 +4,11 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.elt.passsystem.BaseAppAndroidTest
+import com.elt.passsystem.domain.entities.AuthenticationLoginFailure
 import com.elt.passsystem.extensions.hasText
 import com.elt.passsystem.extensions.isEnabledAndNotEmpty
 import com.elt.passsystem.extensions.tap
 import com.elt.passsystem.extensions.type
-import com.elt.passsystem.screens.LoginScreenTestTag
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
@@ -24,7 +24,7 @@ class LoginScreenTest: BaseAppAndroidTest() {
     private lateinit var mockLoginViewModel: LoginViewModel
 
     @MockK
-    private lateinit var mockState: LiveData<LoginViewModel.LoginState>
+    private lateinit var mockState: LiveData<LoginViewModel.State>
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -32,14 +32,14 @@ class LoginScreenTest: BaseAppAndroidTest() {
     @Test
     fun testing_properties() = runBlocking<Unit> {
         val username = "user12345"
-        val state = MutableLiveData<LoginViewModel.LoginState>()
+        val state = MutableLiveData<LoginViewModel.State>()
         every { mockLoginViewModel.state } returns state
         launch(Dispatchers.Main) {
-            state.value = LoginViewModel.LoginState(
+            state.value = LoginViewModel.State(
                 connected = false,
                 loggingIn = false,
                 username = username,
-                errorType = LoginViewModel.ErrorType.BackendError,
+                authenticationLoginFailure = AuthenticationLoginFailure.BackendProblems,
             )
         }
 
@@ -86,14 +86,14 @@ class LoginScreenTest: BaseAppAndroidTest() {
     @Test
     fun testing_onLogin() = runBlocking {
         val password = "thePassword"
-        val state = MutableLiveData<LoginViewModel.LoginState>()
+        val state = MutableLiveData<LoginViewModel.State>()
         every { mockLoginViewModel.state } returns state
         launch(Dispatchers.Main) {
-            state.value = LoginViewModel.LoginState(
+            state.value = LoginViewModel.State(
                 connected = true,
                 loggingIn = false,
                 username = "user12345",
-                errorType = LoginViewModel.ErrorType.NoError,
+                authenticationLoginFailure = null,
             )
         }
 

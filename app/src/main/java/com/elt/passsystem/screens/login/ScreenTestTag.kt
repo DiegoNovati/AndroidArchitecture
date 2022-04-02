@@ -1,4 +1,4 @@
-package com.elt.passsystem.screens
+package com.elt.passsystem.screens.login
 
 sealed class ScreenTestTag(val name: String)
 

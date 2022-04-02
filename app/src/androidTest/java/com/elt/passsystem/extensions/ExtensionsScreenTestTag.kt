@@ -2,7 +2,7 @@ package com.elt.passsystem.extensions
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import com.elt.passsystem.screens.ScreenTestTag
+import com.elt.passsystem.screens.login.ScreenTestTag
 
 fun ScreenTestTag.isEnabled(composeContentTestRule: ComposeContentTestRule) =
     composeContentTestRule

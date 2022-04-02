@@ -15,8 +15,7 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.setMain
@@ -89,17 +88,17 @@ class LoginViewModelTest: BaseAppTest() {
     fun `testing resetData`() {
         loginViewModel.resetData()
 
-        val loginState = loginViewModel.state.value
-        assertEquals("", loginState?.username)
-        assertEquals(LoginViewModel.ErrorType.NoError, loginState?.errorType)
+        val loginState = loginViewModel.state.value!!
+        assertEquals("", loginState.username)
+        assertNull(loginState.authenticationLoginFailure)
     }
 
     @Test
     fun `testing resetError`() {
         loginViewModel.resetError()
 
-        val loginState = loginViewModel.state.value
-        assertEquals(LoginViewModel.ErrorType.NoError, loginState?.errorType)
+        val loginState = loginViewModel.state.value!!
+        assertNull(loginState.authenticationLoginFailure)
     }
 
     @Test
@@ -141,7 +140,7 @@ class LoginViewModelTest: BaseAppTest() {
         val actual = loginViewModel.state.value!!
 
         assertFalse(actual.loggingIn)
-        assertEquals(LoginViewModel.ErrorType.LoginError, actual.errorType)
+        assertEquals(AuthenticationLoginFailure.LoginError, actual.authenticationLoginFailure)
 
         verify(exactly = 1) {
             mockUseCaseAuthenticationLogin.invoke(any(), any(), any())
@@ -165,7 +164,7 @@ class LoginViewModelTest: BaseAppTest() {
         val actual = loginViewModel.state.value!!
 
         assertFalse(actual.loggingIn)
-        assertEquals(LoginViewModel.ErrorType.ConnectionError, actual.errorType)
+        assertEquals(AuthenticationLoginFailure.ConnectionProblems, actual.authenticationLoginFailure)
 
         verify(exactly = 1) {
             mockUseCaseAuthenticationLogin.invoke(any(), any(), any())
@@ -189,7 +188,7 @@ class LoginViewModelTest: BaseAppTest() {
         val actual = loginViewModel.state.value!!
 
         assertFalse(actual.loggingIn)
-        assertEquals(LoginViewModel.ErrorType.BackendError, actual.errorType)
+        assertEquals(AuthenticationLoginFailure.BackendProblems, actual.authenticationLoginFailure)
 
         verify(exactly = 1) {
             mockUseCaseAuthenticationLogin.invoke(any(), any(), any())
@@ -214,7 +213,7 @@ class LoginViewModelTest: BaseAppTest() {
         val actual = loginViewModel.state.value!!
 
         assertFalse(actual.loggingIn)
-        assertEquals(LoginViewModel.ErrorType.UnexpectedError(exception.message!!), actual.errorType)
+        assertEquals(UnexpectedError(exception), actual.authenticationLoginFailure)
 
         verify(exactly = 1) {
             mockUseCaseAuthenticationLogin.invoke(any(), any(), any())

@@ -33,7 +33,6 @@ fun HomeBookingsScreen(
     LazyColumn(
         modifier = Modifier
             .padding(16.dp),
-        //.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         state = listState,
     ) {

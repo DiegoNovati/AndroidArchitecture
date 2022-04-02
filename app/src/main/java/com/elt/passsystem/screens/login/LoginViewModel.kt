@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.elt.passsystem.domain.entities.AuthenticationLoginFailure
 import com.elt.passsystem.domain.entities.LoginResult
-import com.elt.passsystem.domain.entities.UnexpectedError
 import com.elt.passsystem.domain.usecases.authentication.UseCaseAuthenticationLogin
 import com.elt.passsystem.services.IServiceActivityBus
 import com.elt.passsystem.services.IServiceNavigation
@@ -24,87 +23,77 @@ class LoginViewModel @Inject constructor(
     private val globalState: GlobalState,
 ) : ViewModel() {
 
-    sealed class ErrorType {
-        object NoError: ErrorType()
-        object LoginError: ErrorType()
-        object ConnectionError: ErrorType()
-        object BackendError: ErrorType()
-        data class UnexpectedError(val error: String): ErrorType()
-    }
-
-    data class LoginState(
-        val connected: Boolean,
-        val loggingIn: Boolean,
-        val username: String,
-        val errorType: ErrorType,
+    data class State(
+        val connected: Boolean = true,
+        val loggingIn: Boolean = false,
+        val username: String = "",
+        val authenticationLoginFailure: AuthenticationLoginFailure? = null,
     )
 
-    private val _state: MutableLiveData<LoginState> by lazy { MutableLiveData<LoginState>() }
-    val state: LiveData<LoginState> = _state
-
-    private var loginState = LoginState(
-        connected = true,
-        loggingIn = false,
-        username = "",
-        errorType = ErrorType.NoError,
-    )
+    private var localState = State()
+    private val _state = MutableLiveData<State>()
+    val state: LiveData<State> = _state
 
     init {
         serviceActivityBus.registerConnectivityStateChanged {
-            updateState(loginState.copy(connected = it))
+            localState = localState.copy(connected = it)
+            updateState()
         }
 
-        updateState(loginState.copy(connected = serviceActivityBus.getConnectivityState()))
+        localState = localState.copy(connected = serviceActivityBus.getConnectivityState())
+        updateState()
     }
 
-    fun updateUsername(username: String) =
-        updateState(loginState.copy(username = username, errorType = ErrorType.NoError))
+    fun updateUsername(username: String) {
+        localState = localState.copy(username = username, authenticationLoginFailure = null)
+        updateState()
+    }
 
     fun resetData() {
-        updateState(loginState.copy(username = "", errorType = ErrorType.NoError))
+        localState = localState.copy(username = "", authenticationLoginFailure = null)
+        updateState()
     }
 
-    fun resetError() =
-        updateState(loginState.copy(errorType = ErrorType.NoError))
+    fun resetError() {
+        localState = localState.copy(authenticationLoginFailure = null)
+        updateState()
+    }
 
     fun login(password: String) {
-        updateState(loginState.copy(loggingIn = true))
+        localState = localState.copy(loggingIn = true, authenticationLoginFailure = null)
+        updateState()
+
+        val params = UseCaseAuthenticationLogin.Params(
+            username = localState.username,
+            password = password,
+        )
         viewModelScope.launch {
-            useCaseAuthenticationLogin.invoke(
-                params = UseCaseAuthenticationLogin.Params(
-                    username = loginState.username,
-                    password = password,
-                ),
-                scope = viewModelScope,
-            ) {
-                it.fold({ failure ->
-                    val errorType = when (failure) {
-                        AuthenticationLoginFailure.LoginError ->
-                            ErrorType.LoginError
-                        AuthenticationLoginFailure.ConnectionProblems ->
-                            ErrorType.ConnectionError
-                        AuthenticationLoginFailure.BackendProblems ->
-                            ErrorType.BackendError
-                        is UnexpectedError ->
-                            ErrorType.UnexpectedError(failure.e.message ?: "Unexpected problem")
-                    }
-                    updateState(loginState.copy(errorType = errorType, loggingIn = false))
-                }) { loginResult ->
-                    openHome(loginResult)
-                    updateState(loginState.copy(loggingIn = false))
-                }
+            useCaseAuthenticationLogin.invoke(params, viewModelScope) {
+                it.fold(::displayError, ::loginSuccessful)
             }
         }
     }
 
-    private fun updateState(loginState: LoginState) {
-        this.loginState = loginState
+    private fun loginSuccessful(loginResult: LoginResult) {
+        localState = localState.copy(loggingIn = false)
+        updateState()
+        openHome(loginResult)
+    }
 
-        _state.value = loginState
+    private fun displayError(authenticationLoginFailure: AuthenticationLoginFailure) {
+        localState = localState.copy(
+            loggingIn = false,
+            authenticationLoginFailure = authenticationLoginFailure,
+        )
+        updateState()
     }
 
     private fun openHome(loginResult: LoginResult) {
         globalState.loginResult = loginResult
         serviceNavigation.open(Route.Home)
+    }
+
+    private fun updateState() {
+        _state.value = localState
     }
 }
