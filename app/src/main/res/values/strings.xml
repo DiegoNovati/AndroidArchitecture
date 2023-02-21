@@ -1,0 +1,22 @@
+<resources>
+    <string name="appName">Android Architecture</string>
+
+    <string name="connectionMissing">- Disconnected</string>
+
+    <string name="loginTitle">Login %s</string>
+    <string name="loginInputUsername">Username</string>
+    <string name="loginInputPassword">Password</string>
+    <string name="loginInputFakeBackend">Use Fake backend</string>
+    <string name="loginInputFakeAuthenticationExpire">Fake authentication expiring\n(10 seconds after successful login)</string>
+    <string name="loginLoginButton">Login</string>
+    <string name="loginLoginReset">Reset</string>
+    <string name="loginErrorBackendProblems">There were backend problems. Please retry in a couple of minutes</string>
+    <string name="loginErrorConnectionProblems">There were Internet problems. Please verify you are still connected to Internet</string>
+    <string name="loginErrorLoginError">Login failed. Please check the username/password</string>
+    <string name="loginErrorUnexpectedError">Unexpected error</string>
+
+    <string name="homeTitle">Home %s</string>
+    <string name="homeLogoutButton">Logout</string>
+    <string name="homeBottomScreenBookingsTitle">Bookings</string>
+    <string name="homeBottomScreenCustomersTitle">Customers</string>
+</resources>

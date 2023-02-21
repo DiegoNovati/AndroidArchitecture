@@ -1,0 +1,36 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    // Kotlin helper functions
+    api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+    // Kotlin coroutines
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+
+    // Arrow - Functional programming
+    api "io.arrow-kt:arrow-core:1.0.1"
+
+    // Json
+    implementation 'org.json:json:20220924'
+
+    // ********** Testing **********
+
+    // JUnit
+    testImplementation 'junit:junit:4.13.2'
+
+    // MockK
+    testImplementation 'io.mockk:mockk:1.13.4'
+
+    // Coroutines
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-debug:$coroutines_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
+}

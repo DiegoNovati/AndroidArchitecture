@@ -1,0 +1,34 @@
+buildscript {
+    ext {
+        configurationVariables = [
+                sdk_min = 21,
+                sdk_target = 33,
+                sdk_compile = 33,
+                version_code = 200,
+                version_name = "1.83.0",
+        ]
+        kotlin_version = '1.8.10'
+        coroutines_version = '1.6.4'
+        hilt_version = '2.45'
+    }
+    dependencies {
+        // Hilt
+        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+    repositories {
+        mavenCentral()
+    }
+}
+
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+plugins {
+    id 'com.android.application' version '8.0.0-alpha11' apply false
+    id 'com.android.library' version '8.0.0-alpha11' apply false
+    id 'org.jetbrains.kotlin.android' version '1.7.20' apply false
+    id 'org.jetbrains.kotlin.jvm' version '1.8.10' apply false
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

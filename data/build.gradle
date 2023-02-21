@@ -1,0 +1,110 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdk sdk_compile
+
+    namespace "uk.co.itmms.androidArchitecture.data"
+
+    defaultConfig {
+        minSdk sdk_min
+        targetSdk sdk_target
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+
+        buildConfigField "String", "BACKEND_URL", '"https://qaappapi.passgenius.com"'
+
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+    kapt {
+        useBuildCache = false
+    }
+}
+
+dependencies {
+    implementation project(path: ':domain')
+
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+
+    // Gson
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    // OkHttp3
+    def okHttp3Version = '4.10.0'
+    implementation "com.squareup.okhttp3:okhttp:$okHttp3Version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okHttp3Version"
+
+    // Retrofit
+    def retrofitVersion = '2.9.0'
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+
+    // Room
+    def roomVersion = '2.5.0'
+    kapt "androidx.room:room-compiler:$roomVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
+
+    // Flipper
+    releaseImplementation "com.github.theGlenn:flipper-android-no-op:0.9.0"
+
+    // ********** Added only in the DEBUG variant **********
+
+    // Flipper
+    def flipperVersion = '0.182.0'
+    debugImplementation "com.facebook.soloader:soloader:0.10.5"
+    debugImplementation "com.facebook.flipper:flipper:$flipperVersion"
+    debugImplementation "com.facebook.flipper:flipper-network-plugin:$flipperVersion"
+    debugImplementation "com.facebook.flipper:flipper-leakcanary2-plugin:$flipperVersion"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:2.10"
+
+    // ********** Testing **********
+
+    // JUnit
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+
+    // MockK
+    testImplementation 'io.mockk:mockk:1.13.4'
+
+    // Coroutines
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-debug:$coroutines_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
+
+    // Robolectric
+    def robolectricVersion = '4.9.2'
+    testImplementation "org.robolectric:robolectric:$robolectricVersion"
+    testImplementation "org.robolectric:shadows-multidex:$robolectricVersion"
+
+    // Room
+    testImplementation "androidx.room:room-testing:$roomVersion"
+}
