@@ -53,6 +53,12 @@ To run the lint from the command line, you can use the following command:
 ./gradlew lint
 ```
 
+To check the release version, use the following command:
+
+```bash
+./gradlew lintRelease
+```
+
 ## IDE
 This App is developed using Android Studio Flamingo with JDK 17
 
