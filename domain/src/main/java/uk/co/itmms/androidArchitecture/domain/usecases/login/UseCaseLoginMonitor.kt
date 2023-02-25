@@ -43,6 +43,9 @@ class UseCaseLoginMonitor(
                     Update(UpdateType.Connected, it)
                 },
                 authenticatedFlow.map {
+                    if (!it) {
+                        repositoryRuntime.clear()
+                    }
                     Update(UpdateType.Authentication, it)
                 }
             ),

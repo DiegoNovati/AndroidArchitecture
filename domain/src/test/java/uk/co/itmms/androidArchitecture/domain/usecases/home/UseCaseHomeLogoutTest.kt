@@ -43,6 +43,6 @@ class UseCaseHomeLogoutTest: BaseDomainTest() {
             mockRepositoryAuthentication.logout()
             mockRepositoryRuntime.clear()
         }
-        confirmVerified(mockRepositoryAuthentication)
+        confirmVerified(mockRepositoryAuthentication, mockRepositoryRuntime)
     }
 }

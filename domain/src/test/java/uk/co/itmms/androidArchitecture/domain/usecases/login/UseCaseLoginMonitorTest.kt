@@ -49,8 +49,10 @@ class UseCaseLoginMonitorTest : BaseDomainTest() {
 
         coVerify(exactly = 1) {
             mockRepositoryNetworkMonitor.monitor()
+            mockRepositoryRuntime.isAuthenticatedFlow()
+            mockRepositoryRuntime.clear()
         }
-        confirmVerified(mockRepositoryNetworkMonitor)
+        confirmVerified(mockRepositoryNetworkMonitor, mockRepositoryRuntime)
     }
 
     @Test
@@ -70,7 +72,9 @@ class UseCaseLoginMonitorTest : BaseDomainTest() {
 
         coVerify(exactly = 1) {
             mockRepositoryNetworkMonitor.monitor()
+            mockRepositoryRuntime.isAuthenticatedFlow()
+            mockRepositoryRuntime.clear()
         }
-        confirmVerified(mockRepositoryNetworkMonitor)
+        confirmVerified(mockRepositoryNetworkMonitor, mockRepositoryRuntime)
     }
 }
