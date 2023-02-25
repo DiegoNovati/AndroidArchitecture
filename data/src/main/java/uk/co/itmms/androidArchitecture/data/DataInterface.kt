@@ -56,16 +56,17 @@ object DataInterface {
 
     /**
      * Use cases exported by the module
+     *
+     * Note: use cases are created each time they are used, to avoid increasing usage of memory.
      */
 
-    val useCaseLoginMonitor: UseCaseLoginMonitor by lazy {
+    fun getUseCaseLoginMonitor(): UseCaseLoginMonitor =
         UseCaseLoginMonitor(
             repositoryDevelopmentLogger, repositoryDevelopmentAnalytics, repositoryNetworkMonitor,
             repositoryRuntime,
         )
-    }
 
-    val useCaseLoginLogin: UseCaseLoginLogin by lazy {
+    fun getUseCaseLoginLogin(): UseCaseLoginLogin =
         UseCaseLoginLogin(
             repositoryDevelopmentLogger,
             repositoryDevelopmentAnalytics,
@@ -74,33 +75,33 @@ object DataInterface {
             repositoryBookings,
             repositoryRuntime,
         )
-    }
 
-    val useCaseHomeInit: UseCaseHomeInit by lazy {
+    fun getUseCaseHomeInit(): UseCaseHomeInit =
         UseCaseHomeInit(
             repositoryDevelopmentLogger, repositoryDevelopmentAnalytics, repositoryRuntime
         )
-    }
 
-    val useCaseHomeMonitor: UseCaseHomeMonitor by lazy {
+    fun getUseCaseHomeMonitor(): UseCaseHomeMonitor =
         UseCaseHomeMonitor(
             repositoryDevelopmentLogger,
             repositoryDevelopmentAnalytics,
             repositoryNetworkMonitor
         )
-    }
 
-    val useCaseHomeLogout: UseCaseHomeLogout by lazy {
+
+    fun getUseCaseHomeLogout(): UseCaseHomeLogout =
         UseCaseHomeLogout(
             repositoryDevelopmentLogger,
             repositoryDevelopmentAnalytics,
             repositoryAuthentication,
             repositoryRuntime,
         )
-    }
 
     /**
      * Repositories and data sources used by the use cases
+     *
+     * Note: repositories and data sources are created once the first time they are used and never
+     *       recreated
      */
 
     private val repositoryDevelopmentAnalytics: IRepositoryDevelopmentAnalytics by lazy {

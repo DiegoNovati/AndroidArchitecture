@@ -10,34 +10,28 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object ModuleUseCases {
 
     @Provides
-    @Singleton
     fun provideUseCaseLoginFlow(): UseCaseLoginMonitor =
-        DataInterface.useCaseLoginMonitor
+        DataInterface.getUseCaseLoginMonitor()
 
     @Provides
-    @Singleton
     fun provideUseCaseLoginLogin(): UseCaseLoginLogin =
-        DataInterface.useCaseLoginLogin
+        DataInterface.getUseCaseLoginLogin()
 
     @Provides
-    @Singleton
     fun provideUseCaseHomeInit(): UseCaseHomeInit =
-        DataInterface.useCaseHomeInit
+        DataInterface.getUseCaseHomeInit()
 
     @Provides
-    @Singleton
     fun provideUseCaseHomeFlow(): UseCaseHomeMonitor =
-        DataInterface.useCaseHomeMonitor
+        DataInterface.getUseCaseHomeMonitor()
 
     @Provides
-    @Singleton
     fun provideUseCaseHomeLogout(): UseCaseHomeLogout =
-        DataInterface.useCaseHomeLogout
+        DataInterface.getUseCaseHomeLogout()
 }
