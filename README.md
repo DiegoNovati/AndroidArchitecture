@@ -22,7 +22,30 @@ The presentation logic is implemented using Jetpack Compose and following the MV
 - View: the view is implemented using Jetpack Compose
 - ViewModel: the view model is implemented using the AndroidX library
 
+## Tests from the command line
+
+### Unit tests
+Tu run all the unit tests from the command line, you can use the following command:
+
+```bash
+./gradlew test
+``` 
+
+Note: it will run all the unit tests defined for each module of the project, including the project 
+itself 
+
+### Instrumentation tests
+To run all the instrumentation tests from the command line, you can use the following command:
+
+```bash
+./gradlew connectedAndroidTest
+```
+
+Note: it will run all the instrumentation tests defined for each module of the project, including 
+the project itself.
+
+Note: the emulators needs to be already started before running the commandADDSSS
+
 ## IDE
 This App is developed using Android Studio Flamingo with JDK 17
-
 
