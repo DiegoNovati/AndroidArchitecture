@@ -10,7 +10,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import uk.co.itmms.androidArchitecture.navigation.NavigationHost
+import uk.co.itmms.androidArchitecture.widgets.NavigationHost
 import uk.co.itmms.androidArchitecture.ui.theme.AndroidArchitectureTheme
 import dagger.hilt.android.AndroidEntryPoint
 
