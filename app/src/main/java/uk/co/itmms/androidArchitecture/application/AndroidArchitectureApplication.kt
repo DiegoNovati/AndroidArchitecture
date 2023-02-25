@@ -7,7 +7,7 @@ import dagger.hilt.android.HiltAndroidApp
 
 
 @HiltAndroidApp
-class PassApplication : MultiDexApplication() {
+class AndroidArchitectureApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
