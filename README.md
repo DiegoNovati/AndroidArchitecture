@@ -46,6 +46,13 @@ the project itself.
 
 Note: the emulators needs to be already started before running the commandADDSSS
 
+## Lint
+To run the lint from the command line, you can use the following command:
+
+```bash
+./gradlew lint
+```
+
 ## IDE
 This App is developed using Android Studio Flamingo with JDK 17
 
