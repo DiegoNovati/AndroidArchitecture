@@ -1,0 +1,71 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    compileSdk sdk_compile
+
+    namespace 'uk.co.itmms.specifications'
+
+    defaultConfig {
+        minSdk sdk_min
+        targetSdk sdk_target
+
+        testInstrumentationRunner getInstrumentation()
+
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField 'String', 'TEST_TAGS', '"' + getTestTags() + '"'
+            buildConfigField 'String', 'TEST_SCENARIO', '"' + getTestScenario() + '"'
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+}
+
+def getInstrumentation() {
+    project.hasProperty('cucumber') ? 'uk.co.itmms.specifications.test.CucumberTestRunner' : 'androidx.test.runner.AndroidJUnitRunner'
+}
+def getTestTags() {
+    project.getProperties().get('tags') ?: ''
+}
+def getTestScenario() {
+    project.getProperties().get('scenario') ?: ''
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+
+
+    // ********** Android Testing **********
+
+    // JUnit
+    androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
+
+    // Espresso
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
+
+    // Cucumber
+    androidTestImplementation 'com.google.guava:guava:27.0.1-android'
+    androidTestImplementation 'info.cukes:cucumber-android:1.2.6'
+    androidTestImplementation 'info.cukes:cucumber-picocontainer:1.2.6'
+}

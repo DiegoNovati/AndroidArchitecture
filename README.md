@@ -59,6 +59,20 @@ To check the release version, use the following command:
 ./gradlew lintRelease
 ```
 
+## Specification module
+The specification module is a library that contains all the specifications for the App written in
+Cucumber/Gherkin language.
+
+To check the specifications, use the following command:
+
+```bash
+./gradlew specifications:connectedCheck -Pcucumber
+```
+
+The specifications are written in the following files:
+
+- [features](specification/src/main/assets/features)
+
 ## IDE
 This App is developed using Android Studio Flamingo with JDK 17
 
