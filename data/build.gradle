@@ -94,10 +94,6 @@ dependencies {
 
     // JUnit
     testImplementation "junit:junit:$junit_version"
-    androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
-
-    // Espresso
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
 
     // MockK
     testImplementation "io.mockk:mockk:$mockk_version"
@@ -113,4 +109,12 @@ dependencies {
 
     // Room
     testImplementation "androidx.room:room-testing:$roomVersion"
+
+    // ********** Android Testing **********
+
+    // JUnit
+    androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
+
+    // Espresso
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
 }
