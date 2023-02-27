@@ -1,5 +1,6 @@
 package uk.co.itmms.androidArchitecture.data.extensions
 
+/*
 import uk.co.itmms.androidArchitecture.data.models.DBCustomer
 import uk.co.itmms.androidArchitecture.data.models.NetCustomer
 import uk.co.itmms.androidArchitecture.domain.entities.Customer
@@ -25,3 +26,5 @@ fun NetCustomer.toDBCustomer(): DBCustomer =
 
 fun List<NetCustomer>.toDBCustomerList(): List<DBCustomer> =
     this.map { it.toDBCustomer() }
+
+ */

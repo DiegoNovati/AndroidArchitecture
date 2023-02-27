@@ -1,67 +1,50 @@
 package uk.co.itmms.androidArchitecture.data.models
 
-import java.util.*
+data class NetAuthLoginRequest(
+    val username: String,
+    val password: String,
+)
 
-data class NetAuthenticateResponse(
+data class NetAuthLoginResponse(
+    val id: Long,
+    val username: String,
+    val email: String,
+    val firstName: String,
+    val lastName: String,
+    val gender: String,
+    val image: String,
     val token: String,
-    val offices: List<NetAuthenticateOffice>,
 )
 
-data class NetAuthenticateOffice(
-    val bid: String,
-    val display: String,
-    val v2: Boolean,
-    val cdn: NetAuthenticateOfficeCdn,
+data class NetProductsResponse(
+    val products: List<NetProductProduct>,
+    val total: Int,
+    val skip: Int,
+    val limit: Int,
 )
 
-data class NetAuthenticateOfficeCdn(
-    val baseUrl: String,
-    val policy: String,
-    val signature: String,
-    val keyPairId: String,
-)
-
-data class NetCustomersResponse(
-    val customers: List<NetCustomer>,
-)
-
-data class NetCustomer(
+data class NetProductProduct(
     val id: Long,
-    val bid: String,
-    val uuid: String,
     val title: String,
-    val firstname: String,
-    val nickname: String,
-    val surname: String,
-    val location: String,
-    val status: String,
-    val dnr: Boolean,
-    val dols: Boolean,
-    val dob: String,
-    val allergies: Boolean,
-    val modified: Date,
-    val photoKey: String?,
-    val careplanReviewDate: String,
+    val description: String,
+    val price: Long,
+    val discountPercentage: Double,
+    val rating: Double,
+    val stock: Long,
+    val brand: String,
+    val category: String,
+    val thumbnail: String,
+    val images: List<String>
 )
 
-data class NetBookingsResponse(
-    val start: Date,
-    val end: Date,
-    val bookings: List<NetBooking>
+data class NetTodosResponse(
+    val todos: List<NetTodoTodo>,
+    val total: Int,
+    val skip: Int,
+    val limit: Int,
 )
-
-data class NetBooking(
+data class NetTodoTodo(
     val id: Long,
-    val customerBid: String,
-    val status: String,
-    val nfcTag: Int,
-    val otherCareworkers: List<NetNetBookingCareWorker>,
-    val start: Date,
-    val end: Date,
-)
-
-data class NetNetBookingCareWorker(
-    val bid: String,
-    val name: String?,
-    val phone: String?,
+    val todo: String,
+    val completed: Boolean,
 )

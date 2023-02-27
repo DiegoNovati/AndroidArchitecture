@@ -1,5 +1,6 @@
 package uk.co.itmms.androidArchitecture.data.extensions
 
+/*
 import uk.co.itmms.androidArchitecture.data.models.DBBooking
 import uk.co.itmms.androidArchitecture.data.models.DBBookingStatus
 import uk.co.itmms.androidArchitecture.data.models.NetBooking
@@ -52,3 +53,5 @@ private fun DBBookingStatus.toBookingStatus(): BookingStatus =
         DBBookingStatus.Scheduled -> BookingStatus.Scheduled
         DBBookingStatus.Unknown -> throw InvalidPropertiesFormatException("Trying to convert the DBCustomer status Unknown")
     }
+
+ */

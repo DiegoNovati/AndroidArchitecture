@@ -1,8 +1,8 @@
 package uk.co.itmms.androidArchitecture.data.repositories
 
 import arrow.core.Either
-import uk.co.itmms.androidArchitecture.data.datasources.network.PassApiErrorCode
-import uk.co.itmms.androidArchitecture.data.datasources.network.PassApiException
+import uk.co.itmms.androidArchitecture.data.datasources.network.BackendErrorCode
+import uk.co.itmms.androidArchitecture.data.datasources.network.BackendException
 import uk.co.itmms.androidArchitecture.domain.repositories.RepositoryBackendFailure
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
@@ -33,7 +33,7 @@ class RepositoryUtilitiesTest {
             val result = listOf("one", "two", "three")
 
             val actual = invokeRepository({
-                throw PassApiException(errorCode = PassApiErrorCode.NoDataChanges)
+                throw BackendException(errorCode = BackendErrorCode.NoDataChanges)
             }, {
                 Either.Right(result)
             })
@@ -48,9 +48,9 @@ class RepositoryUtilitiesTest {
     fun `WHEN the default lambda fails AND the exception is NoDataChanges AND onNoDataChanged fails with NoDataChanges THEN returns a left BackendProblems`() =
         runBlocking {
             val actual = invokeRepository<List<String>>({
-                throw PassApiException(errorCode = PassApiErrorCode.NoDataChanges)
+                throw BackendException(errorCode = BackendErrorCode.NoDataChanges)
             }, {
-                throw PassApiException(errorCode = PassApiErrorCode.NoDataChanges)
+                throw BackendException(errorCode = BackendErrorCode.NoDataChanges)
             })
 
             assertTrue(actual.isLeft())
@@ -63,9 +63,9 @@ class RepositoryUtilitiesTest {
     fun `WHEN the default lambda fails AND the exception is any other PassApiException THEN returns a left value`() =
         runBlocking {
             val actual = invokeRepository<List<String>>({
-                throw PassApiException(errorCode = PassApiErrorCode.NoDataChanges)
+                throw BackendException(errorCode = BackendErrorCode.NoDataChanges)
             }, {
-                throw PassApiException(errorCode = PassApiErrorCode.SSLError)
+                throw BackendException(errorCode = BackendErrorCode.SSLError)
             })
 
             assertTrue(actual.isLeft())

@@ -7,8 +7,8 @@ import uk.co.itmms.androidArchitecture.data.datasources.db.PassDatabase
 import uk.co.itmms.androidArchitecture.data.datasources.db.openDatabase
 import uk.co.itmms.androidArchitecture.data.datasources.logging.ILoggingConsole
 import uk.co.itmms.androidArchitecture.data.datasources.logging.LoggingConsole
-import uk.co.itmms.androidArchitecture.data.datasources.network.IPassApi
-import uk.co.itmms.androidArchitecture.data.datasources.network.createPassApi
+import uk.co.itmms.androidArchitecture.data.datasources.network.IBackend
+import uk.co.itmms.androidArchitecture.data.datasources.network.createBackend
 import uk.co.itmms.androidArchitecture.data.datasources.networkMonitor.ConnectivityChecker
 import uk.co.itmms.androidArchitecture.data.datasources.networkMonitor.ConnectivityMonitorCallback
 import uk.co.itmms.androidArchitecture.data.datasources.networkMonitor.IConnectivityChecker
@@ -38,7 +38,7 @@ object DataInterface {
 
     private lateinit var passDatabase: PassDatabase
 
-    private lateinit var passApi: IPassApi
+    private lateinit var passApi: IBackend
 
     /**
      * Function initializing all the engines used by the data module
@@ -51,7 +51,7 @@ object DataInterface {
         initFlipper(applicationContext, networkFlipperPlugin)
 
         passDatabase = openDatabase(applicationContext)
-        passApi = createPassApi(releaseMode, networkFlipperPlugin)
+        passApi = createBackend(releaseMode, networkFlipperPlugin)
     }
 
     /**

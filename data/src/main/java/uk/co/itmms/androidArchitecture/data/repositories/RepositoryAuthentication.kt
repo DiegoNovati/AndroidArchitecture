@@ -2,8 +2,8 @@ package uk.co.itmms.androidArchitecture.data.repositories
 
 import arrow.core.Either
 import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceBackend
-import uk.co.itmms.androidArchitecture.data.datasources.network.PassApiErrorCode
-import uk.co.itmms.androidArchitecture.data.datasources.network.PassApiException
+import uk.co.itmms.androidArchitecture.data.datasources.network.BackendErrorCode
+import uk.co.itmms.androidArchitecture.data.datasources.network.BackendException
 import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryAuthentication
 
 class RepositoryAuthentication(
@@ -15,43 +15,48 @@ class RepositoryAuthentication(
         password: String
     ): Either<IRepositoryAuthentication.RepositoryAuthenticationFailure, IRepositoryAuthentication.ResultLogin> {
         try {
-            val officesList = dataSourceBackend.authenticate(
-                username = userName,
-                password = password,
-            )
-            if (officesList.isEmpty()) {
-                return Either.Left(IRepositoryAuthentication.RepositoryAuthenticationFailure.LoginError)
-            }
-            if (!officesList[0].v2) {
-                return Either.Left(IRepositoryAuthentication.RepositoryAuthenticationFailure.LoginError)
-            }
+//            val officesList = dataSourceBackend.authenticate(
+//                username = userName,
+//                password = password,
+//            )
+//            if (officesList.isEmpty()) {
+//                return Either.Left(IRepositoryAuthentication.RepositoryAuthenticationFailure.LoginError)
+//            }
+//            if (!officesList[0].v2) {
+//                return Either.Left(IRepositoryAuthentication.RepositoryAuthenticationFailure.LoginError)
+//            }
+//            return Either.Right(
+//                IRepositoryAuthentication.ResultLogin(
+//                    officeBid = officesList[0].bid,
+//                )
+//            )
             return Either.Right(
                 IRepositoryAuthentication.ResultLogin(
-                    officeBid = officesList[0].bid,
+                    officeBid = "bid",
                 )
             )
-        } catch (e: PassApiException) {
+        } catch (e: BackendException) {
             return Either.Left(e.toRepositoryAuthenticationFailure())
         }
     }
 
     override suspend fun logout() {
-        dataSourceBackend.logout()
+        //dataSourceBackend.logout()
     }
 }
 
-internal fun PassApiException.toRepositoryAuthenticationFailure(): IRepositoryAuthentication.RepositoryAuthenticationFailure =
+internal fun BackendException.toRepositoryAuthenticationFailure(): IRepositoryAuthentication.RepositoryAuthenticationFailure =
     when (this.errorCode) {
-        PassApiErrorCode.Http401 -> IRepositoryAuthentication.RepositoryAuthenticationFailure.LoginError
+        BackendErrorCode.Http401 -> IRepositoryAuthentication.RepositoryAuthenticationFailure.LoginError
 
-        PassApiErrorCode.UnknownHost,
-        PassApiErrorCode.Timeout,
-        PassApiErrorCode.SSLError,
-        PassApiErrorCode.HttpUnmanaged,
-        PassApiErrorCode.IO -> IRepositoryAuthentication.RepositoryAuthenticationFailure.ConnectionProblems
+        BackendErrorCode.UnknownHost,
+        BackendErrorCode.Timeout,
+        BackendErrorCode.SSLError,
+        BackendErrorCode.HttpUnmanaged,
+        BackendErrorCode.IO -> IRepositoryAuthentication.RepositoryAuthenticationFailure.ConnectionProblems
 
-        PassApiErrorCode.Http400,
-        PassApiErrorCode.Http403,
-        PassApiErrorCode.NoDataChanges,
-        PassApiErrorCode.Unexpected -> IRepositoryAuthentication.RepositoryAuthenticationFailure.BackendProblems
+        BackendErrorCode.Http400,
+        BackendErrorCode.Http403,
+        BackendErrorCode.NoDataChanges,
+        BackendErrorCode.Unexpected -> IRepositoryAuthentication.RepositoryAuthenticationFailure.BackendProblems
     }

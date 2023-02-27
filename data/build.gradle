@@ -16,7 +16,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
 
-        buildConfigField "String", "BACKEND_URL", '"https://qaappapi.passgenius.com"'
+        buildConfigField "String", "BACKEND_URL", '"https://dummyjson.com"'
 
         kapt {
             arguments {
