@@ -65,7 +65,7 @@ class UseCaseLoginLogin(
                 userName = params.username,
                 password = params.password,
             )
-                .flatMap { resultLogin -> runtime.copy(officeBid = resultLogin.officeBid).right() }
+                .flatMap { resultLogin -> runtime.copy(officeBid = "officeBid").right() }
                 .mapLeft { failure -> failure.toLoginFailure() }
         }
 

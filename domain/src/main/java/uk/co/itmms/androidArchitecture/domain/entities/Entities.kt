@@ -2,6 +2,21 @@ package uk.co.itmms.androidArchitecture.domain.entities
 
 import java.util.Date
 
+enum class Gender {
+    Male, Female,
+}
+
+data class User(
+    val id: Long,
+    val username: String,
+    val email: String,
+    val firstName: String,
+    val lastName: String,
+    val gender: Gender,
+    val image: String,
+)
+
+// ***********************************************
 data class Customer(
     val customerBid: String,
     val name: String,
