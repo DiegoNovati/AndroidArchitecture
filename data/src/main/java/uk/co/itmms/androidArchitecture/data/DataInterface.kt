@@ -2,7 +2,19 @@ package uk.co.itmms.androidArchitecture.data
 
 import android.content.Context
 import android.net.ConnectivityManager
-import uk.co.itmms.androidArchitecture.data.datasources.*
+import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
+import uk.co.itmms.androidArchitecture.data.datasources.DataSourceBackend
+import uk.co.itmms.androidArchitecture.data.datasources.DataSourceConnectivityMonitor
+import uk.co.itmms.androidArchitecture.data.datasources.DataSourceDatabaseBookings
+import uk.co.itmms.androidArchitecture.data.datasources.DataSourceDatabaseCustomers
+import uk.co.itmms.androidArchitecture.data.datasources.DataSourceDevelopmentAnalyticsConsole
+import uk.co.itmms.androidArchitecture.data.datasources.DataSourceDevelopmentLoggerConsole
+import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceBackend
+import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceConnectivityMonitor
+import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceDatabaseBookings
+import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceDatabaseCustomers
+import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceDevelopmentAnalytics
+import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceDevelopmentLogger
 import uk.co.itmms.androidArchitecture.data.datasources.db.PassDatabase
 import uk.co.itmms.androidArchitecture.data.datasources.db.openDatabase
 import uk.co.itmms.androidArchitecture.data.datasources.logging.ILoggingConsole
@@ -14,14 +26,25 @@ import uk.co.itmms.androidArchitecture.data.datasources.networkMonitor.Connectiv
 import uk.co.itmms.androidArchitecture.data.datasources.networkMonitor.IConnectivityChecker
 import uk.co.itmms.androidArchitecture.data.datasources.networkMonitor.IConnectivityMonitorCallback
 import uk.co.itmms.androidArchitecture.data.external.initFlipper
-import uk.co.itmms.androidArchitecture.data.repositories.*
-import uk.co.itmms.androidArchitecture.domain.repositories.*
-import uk.co.itmms.androidArchitecture.domain.usecases.home.UseCaseHomeMonitor
+import uk.co.itmms.androidArchitecture.data.repositories.RepositoryAuthentication
+import uk.co.itmms.androidArchitecture.data.repositories.RepositoryBookings
+import uk.co.itmms.androidArchitecture.data.repositories.RepositoryCustomers
+import uk.co.itmms.androidArchitecture.data.repositories.RepositoryDevelopmentAnalytics
+import uk.co.itmms.androidArchitecture.data.repositories.RepositoryDevelopmentLogger
+import uk.co.itmms.androidArchitecture.data.repositories.RepositoryNetworkMonitor
+import uk.co.itmms.androidArchitecture.data.repositories.RepositoryRuntime
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryAuthentication
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryBookings
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryCustomers
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryDevelopmentAnalytics
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryDevelopmentLogger
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryNetworkMonitor
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryRuntime
 import uk.co.itmms.androidArchitecture.domain.usecases.home.UseCaseHomeInit
 import uk.co.itmms.androidArchitecture.domain.usecases.home.UseCaseHomeLogout
-import uk.co.itmms.androidArchitecture.domain.usecases.login.UseCaseLoginMonitor
+import uk.co.itmms.androidArchitecture.domain.usecases.home.UseCaseHomeMonitor
 import uk.co.itmms.androidArchitecture.domain.usecases.login.UseCaseLoginLogin
-import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
+import uk.co.itmms.androidArchitecture.domain.usecases.login.UseCaseLoginMonitor
 
 /**
  * This object exports the function to initialize the engines used by this module and all the use
@@ -93,7 +116,6 @@ object DataInterface {
         UseCaseHomeLogout(
             repositoryDevelopmentLogger,
             repositoryDevelopmentAnalytics,
-            repositoryAuthentication,
             repositoryRuntime,
         )
 
