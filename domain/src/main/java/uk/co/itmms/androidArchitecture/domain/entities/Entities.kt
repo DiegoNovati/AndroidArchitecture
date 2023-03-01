@@ -16,6 +16,26 @@ data class User(
     val image: String,
 )
 
+data class Product(
+    val id: Long,
+    val title: String,
+    val description: String,
+    val price: Long,
+    val discountPercentage: Double,
+    val rating: Double,
+    val stock: Long,
+    val brand: String,
+    val category: String,
+    val thumbnail: String,
+    val images: List<String>,
+)
+
+data class Todo(
+    val id: Long,
+    val todo: String,
+    val completed: Boolean,
+)
+
 // ***********************************************
 data class Customer(
     val customerBid: String,

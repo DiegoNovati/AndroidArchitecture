@@ -14,25 +14,8 @@ import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceBackend
 import uk.co.itmms.androidArchitecture.data.datasources.network.BackendErrorCode
 import uk.co.itmms.androidArchitecture.data.datasources.network.BackendException
 import uk.co.itmms.androidArchitecture.data.models.NetAuthLoginResponse
-import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryAuthentication
+import uk.co.itmms.androidArchitecture.domain.failures.FailureRepositoryBackendAuthentication
 
-//import uk.co.itmms.androidArchitecture.data.BaseDataTest
-//import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceBackend
-//import uk.co.itmms.androidArchitecture.data.datasources.network.BackendErrorCode
-//import uk.co.itmms.androidArchitecture.data.datasources.network.BackendException
-//import uk.co.itmms.androidArchitecture.data.models.NetAuthenticateOffice
-//import uk.co.itmms.androidArchitecture.data.models.NetAuthenticateOfficeCdn
-//import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryAuthentication
-//import io.mockk.coEvery
-//import io.mockk.coVerify
-//import io.mockk.confirmVerified
-//import io.mockk.impl.annotations.MockK
-//import junit.framework.TestCase.assertEquals
-//import junit.framework.TestCase.assertTrue
-//import kotlinx.coroutines.runBlocking
-//import org.junit.Before
-//import org.junit.Test
-//
 class RepositoryAuthenticationTest : BaseDataTest() {
 
     @MockK
@@ -77,7 +60,7 @@ class RepositoryAuthenticationTest : BaseDataTest() {
         val actual = repositoryAuthentication.login(username, password)
 
         actual.fold({ failure ->
-            assertEquals(IRepositoryAuthentication.RepositoryAuthenticationFailure.LoginError, failure)
+            assertEquals(FailureRepositoryBackendAuthentication.LoginError, failure)
         }){
             fail("Unexpected success")
         }
@@ -95,7 +78,7 @@ class RepositoryAuthenticationTest : BaseDataTest() {
         val actual = repositoryAuthentication.login(username, password)
 
         actual.fold({ failure ->
-            assertEquals(IRepositoryAuthentication.RepositoryAuthenticationFailure.ConnectionProblems, failure)
+            assertEquals(FailureRepositoryBackendAuthentication.ConnectionError, failure)
         }){
             fail("Unexpected success")
         }

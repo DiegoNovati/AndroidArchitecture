@@ -5,17 +5,17 @@ import android.net.ConnectivityManager
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import uk.co.itmms.androidArchitecture.data.datasources.DataSourceBackend
 import uk.co.itmms.androidArchitecture.data.datasources.DataSourceConnectivityMonitor
-import uk.co.itmms.androidArchitecture.data.datasources.DataSourceDatabaseBookings
-import uk.co.itmms.androidArchitecture.data.datasources.DataSourceDatabaseCustomers
+import uk.co.itmms.androidArchitecture.data.datasources.DataSourceDatabaseProducts
+import uk.co.itmms.androidArchitecture.data.datasources.DataSourceDatabaseTodos
 import uk.co.itmms.androidArchitecture.data.datasources.DataSourceDevelopmentAnalyticsConsole
 import uk.co.itmms.androidArchitecture.data.datasources.DataSourceDevelopmentLoggerConsole
 import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceBackend
 import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceConnectivityMonitor
-import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceDatabaseBookings
-import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceDatabaseCustomers
+import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceDatabaseProducts
+import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceDatabaseTodos
 import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceDevelopmentAnalytics
 import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceDevelopmentLogger
-import uk.co.itmms.androidArchitecture.data.datasources.db.PassDatabase
+import uk.co.itmms.androidArchitecture.data.datasources.db.AppDatabase
 import uk.co.itmms.androidArchitecture.data.datasources.db.openDatabase
 import uk.co.itmms.androidArchitecture.data.datasources.logging.ILoggingConsole
 import uk.co.itmms.androidArchitecture.data.datasources.logging.LoggingConsole
@@ -27,19 +27,19 @@ import uk.co.itmms.androidArchitecture.data.datasources.networkMonitor.IConnecti
 import uk.co.itmms.androidArchitecture.data.datasources.networkMonitor.IConnectivityMonitorCallback
 import uk.co.itmms.androidArchitecture.data.external.initFlipper
 import uk.co.itmms.androidArchitecture.data.repositories.RepositoryAuthentication
-import uk.co.itmms.androidArchitecture.data.repositories.RepositoryBookings
-import uk.co.itmms.androidArchitecture.data.repositories.RepositoryCustomers
 import uk.co.itmms.androidArchitecture.data.repositories.RepositoryDevelopmentAnalytics
 import uk.co.itmms.androidArchitecture.data.repositories.RepositoryDevelopmentLogger
 import uk.co.itmms.androidArchitecture.data.repositories.RepositoryNetworkMonitor
+import uk.co.itmms.androidArchitecture.data.repositories.RepositoryProducts
 import uk.co.itmms.androidArchitecture.data.repositories.RepositoryRuntime
+import uk.co.itmms.androidArchitecture.data.repositories.RepositoryTodos
 import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryAuthentication
-import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryBookings
-import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryCustomers
 import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryDevelopmentAnalytics
 import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryDevelopmentLogger
 import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryNetworkMonitor
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryProducts
 import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryRuntime
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryTodos
 import uk.co.itmms.androidArchitecture.domain.usecases.home.UseCaseHomeInit
 import uk.co.itmms.androidArchitecture.domain.usecases.home.UseCaseHomeLogout
 import uk.co.itmms.androidArchitecture.domain.usecases.home.UseCaseHomeMonitor
@@ -59,7 +59,7 @@ object DataInterface {
      */
     private lateinit var applicationContext: Context
 
-    private lateinit var passDatabase: PassDatabase
+    private lateinit var appDatabase: AppDatabase
 
     private lateinit var passApi: IBackend
 
@@ -73,7 +73,7 @@ object DataInterface {
 
         initFlipper(applicationContext, networkFlipperPlugin)
 
-        passDatabase = openDatabase(applicationContext)
+        appDatabase = openDatabase(applicationContext)
         passApi = createBackend(releaseMode, networkFlipperPlugin)
     }
 
@@ -94,8 +94,6 @@ object DataInterface {
             repositoryDevelopmentLogger,
             repositoryDevelopmentAnalytics,
             repositoryAuthentication,
-            repositoryCustomers,
-            repositoryBookings,
             repositoryRuntime,
         )
 
@@ -150,12 +148,12 @@ object DataInterface {
         RepositoryAuthentication(dataSourceBackend)
     }
 
-    private val repositoryCustomers: IRepositoryCustomers by lazy {
-        RepositoryCustomers(dataSourceBackend, dataSourceDatabaseCustomers)
+    private val repositoryProducts: IRepositoryProducts by lazy {
+        RepositoryProducts(dataSourceBackend, dataSourceDatabaseProducts)
     }
 
-    private val repositoryBookings: IRepositoryBookings by lazy {
-        RepositoryBookings(dataSourceBackend, dataSourceDatabaseBookings)
+    private val repositoryTodos: IRepositoryTodos by lazy {
+        RepositoryTodos(dataSourceBackend, dataSourceDatabaseTodos)
     }
 
     private val repositoryRuntime: IRepositoryRuntime by lazy {
@@ -178,12 +176,12 @@ object DataInterface {
         DataSourceBackend(passApi)
     }
 
-    private val dataSourceDatabaseCustomers: IDataSourceDatabaseCustomers by lazy {
-        DataSourceDatabaseCustomers(passDatabase)
+    private val dataSourceDatabaseProducts: IDataSourceDatabaseProducts by lazy {
+        DataSourceDatabaseProducts(appDatabase)
     }
 
-    private val dataSourceDatabaseBookings: IDataSourceDatabaseBookings by lazy {
-        DataSourceDatabaseBookings(passDatabase)
+    private val dataSourceDatabaseTodos: IDataSourceDatabaseTodos by lazy {
+        DataSourceDatabaseTodos(appDatabase)
     }
 
     private val dataSourceConnectivityMonitor: IDataSourceConnectivityMonitor by lazy {

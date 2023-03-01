@@ -7,6 +7,7 @@ import uk.co.itmms.androidArchitecture.domain.entities.Booking
 import uk.co.itmms.androidArchitecture.domain.entities.BookingStatus
 import uk.co.itmms.androidArchitecture.domain.entities.Customer
 import uk.co.itmms.androidArchitecture.domain.failures.FailureLogin
+import uk.co.itmms.androidArchitecture.domain.failures.FailureRepositoryBackendAuthentication
 import uk.co.itmms.androidArchitecture.domain.repositories.*
 import uk.co.itmms.androidArchitecture.domain.usecases.UseCaseBase
 import java.text.SimpleDateFormat
@@ -16,8 +17,6 @@ class UseCaseLoginLogin(
     repositoryLogger: IRepositoryDevelopmentLogger,
     repositoryAnalytics: IRepositoryDevelopmentAnalytics,
     private val repositoryAuthentication: IRepositoryAuthentication,
-    private val repositoryCustomers: IRepositoryCustomers,
-    private val repositoryBookings: IRepositoryBookings,
     private val repositoryRuntime: IRepositoryRuntime,
 ) : UseCaseBase<UseCaseLoginLogin.Params, Unit, FailureLogin>(
     repositoryLogger, repositoryAnalytics
@@ -184,13 +183,13 @@ class UseCaseLoginLogin(
         simpleDateFormat.parse(this)
 }
 
-internal fun IRepositoryAuthentication.RepositoryAuthenticationFailure.toLoginFailure(): FailureLogin =
+internal fun FailureRepositoryBackendAuthentication.toLoginFailure(): FailureLogin =
     when (this) {
-        IRepositoryAuthentication.RepositoryAuthenticationFailure.BackendProblems ->
+        FailureRepositoryBackendAuthentication.BackendError ->
             FailureLogin.BackendProblems
-        IRepositoryAuthentication.RepositoryAuthenticationFailure.ConnectionProblems ->
+        FailureRepositoryBackendAuthentication.ConnectionError ->
             FailureLogin.ConnectionProblems
-        IRepositoryAuthentication.RepositoryAuthenticationFailure.LoginError ->
+        FailureRepositoryBackendAuthentication.LoginError ->
             FailureLogin.LoginError
     }
 

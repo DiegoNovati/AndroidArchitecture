@@ -4,12 +4,14 @@ import android.content.Context
 import androidx.room.*
 import uk.co.itmms.androidArchitecture.data.models.DBBooking
 import uk.co.itmms.androidArchitecture.data.models.DBCustomer
+import uk.co.itmms.androidArchitecture.data.models.DBProduct
+import uk.co.itmms.androidArchitecture.data.models.DBTodo
 import java.text.SimpleDateFormat
 import java.util.*
 
-interface IPassDatabase {
-    fun daoCustomers(): DaoCustomers
-    fun daoBookings(): DaoBookings
+interface IAppDatabase {
+    fun daoProducts(): DaoProducts
+    fun daoTodos(): DaoTodos
 }
 
 // To support auto-migration:
@@ -17,8 +19,8 @@ interface IPassDatabase {
 @Database(
     version = 1,
     entities = [
-        DBCustomer::class,
-        DBBooking::class,
+        DBProduct::class,
+        DBTodo::class,
     ],
     autoMigrations = [
 //        AutoMigration(from = 1, to = 2),
@@ -26,17 +28,17 @@ interface IPassDatabase {
     exportSchema = true
 )
 @TypeConverters(RoomConverters::class)
-abstract class PassDatabase : IPassDatabase, RoomDatabase() {
-    abstract override fun daoCustomers(): DaoCustomers
-    abstract override fun daoBookings(): DaoBookings
+abstract class AppDatabase : IAppDatabase, RoomDatabase() {
+    abstract override fun daoProducts(): DaoProducts
+    abstract override fun daoTodos(): DaoTodos
 }
 
-fun openDatabase(applicationContext: Context): PassDatabase =
+fun openDatabase(applicationContext: Context): AppDatabase =
     Room
         .databaseBuilder(
             applicationContext,
-            PassDatabase::class.java,
-            "PassDatabase.db"
+            AppDatabase::class.java,
+            "AppDatabase.db"
         )
         .build()
 

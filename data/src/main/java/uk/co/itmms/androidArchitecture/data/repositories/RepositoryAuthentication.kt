@@ -8,6 +8,7 @@ import uk.co.itmms.androidArchitecture.data.datasources.network.BackendException
 import uk.co.itmms.androidArchitecture.data.extensions.toGender
 import uk.co.itmms.androidArchitecture.data.models.NetAuthLoginResponse
 import uk.co.itmms.androidArchitecture.domain.entities.User
+import uk.co.itmms.androidArchitecture.domain.failures.FailureRepositoryBackendAuthentication
 import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryAuthentication
 
 class RepositoryAuthentication(
@@ -17,7 +18,7 @@ class RepositoryAuthentication(
     override suspend fun login(
         userName: String,
         password: String
-    ): Either<IRepositoryAuthentication.RepositoryAuthenticationFailure, IRepositoryAuthentication.ResultLogin> =
+    ): Either<FailureRepositoryBackendAuthentication, IRepositoryAuthentication.ResultLogin> =
         try {
             dataSourceBackend.login(
                 username = userName,
@@ -42,18 +43,18 @@ internal fun NetAuthLoginResponse.toResultLogin(): IRepositoryAuthentication.Res
         token = this.token,
     )
 
-internal fun BackendException.toRepositoryAuthenticationFailure(): IRepositoryAuthentication.RepositoryAuthenticationFailure =
+internal fun BackendException.toRepositoryAuthenticationFailure(): FailureRepositoryBackendAuthentication =
     when (this.errorCode) {
-        BackendErrorCode.Http400 -> IRepositoryAuthentication.RepositoryAuthenticationFailure.LoginError
+        BackendErrorCode.Http400 -> FailureRepositoryBackendAuthentication.LoginError
 
         BackendErrorCode.UnknownHost,
         BackendErrorCode.Timeout,
         BackendErrorCode.SSLError,
         BackendErrorCode.HttpUnmanaged,
-        BackendErrorCode.IO -> IRepositoryAuthentication.RepositoryAuthenticationFailure.ConnectionProblems
+        BackendErrorCode.IO -> FailureRepositoryBackendAuthentication.ConnectionError
 
         BackendErrorCode.Http401,
         BackendErrorCode.Http403,
         BackendErrorCode.NoDataChanges,
-        BackendErrorCode.Unexpected -> IRepositoryAuthentication.RepositoryAuthenticationFailure.BackendProblems
+        BackendErrorCode.Unexpected -> FailureRepositoryBackendAuthentication.BackendError
     }

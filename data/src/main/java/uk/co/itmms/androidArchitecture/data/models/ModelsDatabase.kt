@@ -5,6 +5,35 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.*
 
+@Entity(
+    tableName = "Product",
+)
+data class DBProduct(
+    @PrimaryKey(autoGenerate = false)
+    val id: Long,
+    val title: String,
+    val description: String,
+    val price: Long,
+    val discountPercentage: Double,
+    val rating: Double,
+    val stock: Long,
+    val brand: String,
+    val category: String,
+    val thumbnail: String,
+    val imageList: String,
+)
+
+@Entity(
+    tableName = "Todo",
+)
+data class DBTodo(
+    @PrimaryKey(autoGenerate = false)
+    val id: Long,
+    val todo: String,
+    val completed: Boolean,
+)
+
+// *************************************************************************************************
 object TableCustomers {
     const val tableName = "customers"
     const val fieldBid = "bid"

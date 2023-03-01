@@ -3,18 +3,18 @@ package uk.co.itmms.androidArchitecture.data.repositories
 import arrow.core.Either
 import uk.co.itmms.androidArchitecture.data.datasources.network.BackendErrorCode
 import uk.co.itmms.androidArchitecture.data.datasources.network.BackendException
-import uk.co.itmms.androidArchitecture.domain.repositories.RepositoryBackendFailure
+import uk.co.itmms.androidArchitecture.domain.failures.FailureRepositoryBackend
 
 /**
- * Wrapper to manage the case when the backend returns a 304 status (PassApiErrorCode.NoDataChanges)
+ * Wrapper to manage the case when the backend returns a 304 status (BackendException.NoDataChanges)
  *
  * defaultLambda  : default lambda to execute (backend -> database -> returned value
  * onNoDataChanged: lambda to execute when 304 received from the default lambda (database -> returned value)
  */
 suspend fun <T> invokeRepository(
-    defaultLambda: suspend () -> Either<RepositoryBackendFailure, T>,
-    onNoDataChanged: (suspend () -> Either<RepositoryBackendFailure, T>)?,
-): Either<RepositoryBackendFailure, T>  where T : Any=
+    defaultLambda: suspend () -> Either<FailureRepositoryBackend, T>,
+    onNoDataChanged: (suspend () -> Either<FailureRepositoryBackend, T>)?,
+): Either<FailureRepositoryBackend, T>  where T : Any=
     try {
         defaultLambda.invoke()
     } catch (e: BackendException) {
@@ -25,17 +25,17 @@ suspend fun <T> invokeRepository(
                     // infinite recursion
                     invokeRepository(it, null)
                 } ?: run {
-                    Either.Left(RepositoryBackendFailure.BackendProblems)
+                    Either.Left(FailureRepositoryBackend.BackendError)
                 }
             BackendErrorCode.UnknownHost,
             BackendErrorCode.Timeout,
             BackendErrorCode.SSLError,
             BackendErrorCode.HttpUnmanaged,
-            BackendErrorCode.IO -> Either.Left(RepositoryBackendFailure.ConnectionProblems)
+            BackendErrorCode.IO -> Either.Left(FailureRepositoryBackend.ConnectionError)
 
             BackendErrorCode.Http400,
             BackendErrorCode.Http401,
             BackendErrorCode.Http403,
-            BackendErrorCode.Unexpected -> Either.Left(RepositoryBackendFailure.BackendProblems)
+            BackendErrorCode.Unexpected -> Either.Left(FailureRepositoryBackend.BackendError)
         }
     }
