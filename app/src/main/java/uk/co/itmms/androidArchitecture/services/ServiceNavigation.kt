@@ -95,7 +95,7 @@ class ServiceNavigation @Inject constructor(
     }
 
     override fun popBack() {
-        val previous = navController.backQueue[navController.backQueue.size - 2].destination.route
+        val previous = navController.previousBackStackEntry?.destination?.route
         if (previous == null || previous == currentRoute.routeName) {
             // preventing double tab
             return

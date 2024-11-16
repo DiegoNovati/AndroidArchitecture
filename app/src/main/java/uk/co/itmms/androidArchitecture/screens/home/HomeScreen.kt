@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
@@ -34,8 +35,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 sealed class BottomBarRoute(val routeName: String, val isInitialRoute: Boolean = false) {
-    object Bookings : BottomBarRoute("Bookings")
-    object Customers : BottomBarRoute("Customers", true)
+    data object Bookings : BottomBarRoute("Bookings")
+    data object Customers : BottomBarRoute("Customers", true)
 
     companion object {
         fun getInitialRoute(): BottomBarRoute =
@@ -51,13 +52,13 @@ sealed class BottomBarScreen(
     @StringRes val titleId: Int,
     val icon: ImageVector,
 ) {
-    object Bookings : BottomBarScreen(
+    data object Bookings : BottomBarScreen(
         route = BottomBarRoute.Bookings,
         titleId = R.string.homeBottomScreenBookingsTitle,
         icon = Icons.Filled.DateRange,
     )
 
-    object Customers : BottomBarScreen(
+    data object Customers : BottomBarScreen(
         route = BottomBarRoute.Customers,
         titleId = R.string.homeBottomScreenCustomersTitle,
         icon = Icons.Filled.Person,
@@ -147,7 +148,7 @@ fun HomeTopBar(
                 }
             ) {
                 Icon(
-                    imageVector = Icons.Filled.ExitToApp,
+                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
                     contentDescription = stringResource(id = R.string.homeLogoutButton),
                 )
             }
@@ -304,8 +305,8 @@ private val customerList: List<Customer> by lazy {
 private val bookingList: List<Booking> by lazy {
     val formatTime = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
     listOf(
-        Booking(1, "1", BookingStatus.Scheduled, formatTime.parse("08:00:00")!!, formatTime.parse("12:00:00")!!,),
-        Booking(2, "1", BookingStatus.Started, formatTime.parse("14:00:00")!!, formatTime.parse("16:00:00")!!,),
-        Booking(3, "1", BookingStatus.Completed, formatTime.parse("18:00:00")!!, formatTime.parse("20:00:00")!!,),
+        Booking(1, "1", BookingStatus.Scheduled, formatTime.parse("08:00:00")!!, formatTime.parse("12:00:00")!!),
+        Booking(2, "1", BookingStatus.Started, formatTime.parse("14:00:00")!!, formatTime.parse("16:00:00")!!),
+        Booking(3, "1", BookingStatus.Completed, formatTime.parse("18:00:00")!!, formatTime.parse("20:00:00")!!),
     )
 }

@@ -1,7 +1,8 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
+    id 'androidx.room'
 }
 
 android {
@@ -18,10 +19,8 @@ android {
 
         buildConfigField "String", "BACKEND_URL", '"https://qaappapi.passgenius.com"'
 
-        kapt {
-            arguments {
-                arg("room.schemaLocation", "$projectDir/schemas")
-            }
+        room {
+            schemaDirectory "$projectDir/schemas"
         }
     }
 
@@ -45,33 +44,30 @@ android {
             includeAndroidResources = true
         }
     }
-    kapt {
-        useBuildCache = false
-    }
 }
 
 dependencies {
     implementation project(path: ':domain')
 
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
 
     // Gson
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.google.code.gson:gson:2.11.0'
 
     // OkHttp3
-    def okHttp3Version = '4.10.0'
+    def okHttp3Version = '4.12.0'
     implementation "com.squareup.okhttp3:okhttp:$okHttp3Version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okHttp3Version"
 
     // Retrofit
-    def retrofitVersion = '2.9.0'
+    def retrofitVersion = '2.11.0'
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 
     // Room
-    def roomVersion = '2.5.0'
-    kapt "androidx.room:room-compiler:$roomVersion"
+    def roomVersion = '2.6.1'
+    ksp "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
 
     // Flipper
@@ -80,12 +76,12 @@ dependencies {
     // ********** Added only in the DEBUG variant **********
 
     // Flipper
-    def flipperVersion = '0.182.0'
-    debugImplementation "com.facebook.soloader:soloader:0.10.5"
+    def flipperVersion = '0.272.0'
+    debugImplementation 'com.facebook.soloader:soloader:0.12.1'
     debugImplementation "com.facebook.flipper:flipper:$flipperVersion"
     debugImplementation "com.facebook.flipper:flipper-network-plugin:$flipperVersion"
     debugImplementation "com.facebook.flipper:flipper-leakcanary2-plugin:$flipperVersion"
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:2.10"
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
 
     // ********** Testing **********
 
@@ -103,7 +99,7 @@ dependencies {
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
 
     // Robolectric
-    def robolectricVersion = '4.9.2'
+    def robolectricVersion = '4.14'
     testImplementation "org.robolectric:robolectric:$robolectricVersion"
     testImplementation "org.robolectric:shadows-multidex:$robolectricVersion"
 

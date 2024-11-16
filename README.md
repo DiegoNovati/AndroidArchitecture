@@ -1,7 +1,12 @@
 # Android Architecture
 This is a project used to show how the Android App should be organized.
   
-This project has been developed using Android Studio Bumblebee
+This project has been developed using Android Studio Ladybug with JDK 17
+
+## Demo
+The App connects to a real backend using a real account. To allow the use of the App even without 
+having an account, enable the 'Use Fake backend' switch and you can input any value in the 
+username/password fields.
 
 ## Business logic
 The business logic is implemented using Clean Architecture in two different modules:
@@ -58,7 +63,3 @@ To check the release version, use the following command:
 ```bash
 ./gradlew lintRelease
 ```
-
-## IDE
-This App is developed using Android Studio Flamingo with JDK 17
-

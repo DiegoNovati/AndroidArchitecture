@@ -2,19 +2,19 @@ buildscript {
     ext {
         configurationVariables = [
                 sdk_min = 21,
-                sdk_target = 33,
-                sdk_compile = 33,
-                version_code = 200,
-                version_name = "1.83.0",
+                sdk_target = 35,
+                sdk_compile = 35,
+                version_code = 1,
+                version_name = "1.0.0",
         ]
-        kotlin_version = '1.8.10'
-        coroutines_version = '1.6.4'
-        hilt_version = '2.45'
+        kotlin_version = '2.0.21'
+        coroutines_version = '1.9.0'
+        hilt_version = '2.52'
         core_testing_version = '2.2.0'
         junit_version = '4.13.2'
-        junit_ext_version = '1.1.5'
-        mockk_version = '1.13.4'
-        espresso_core_version = '3.5.1'
+        junit_ext_version = '1.2.1'
+        mockk_version = '1.13.13'
+        espresso_core_version = '3.6.1'
     }
     dependencies {
         // Hilt
@@ -28,12 +28,15 @@ buildscript {
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
-    id 'com.android.application' version '8.0.0-beta03' apply false
-    id 'com.android.library' version '8.0.0-beta03' apply false
+    id 'com.android.application' version '8.7.2' apply false
+    id 'com.android.library' version '8.7.2' apply false
     id 'org.jetbrains.kotlin.android' version '1.7.20' apply false
     id 'org.jetbrains.kotlin.jvm' version '1.8.10' apply false
+    id 'com.google.devtools.ksp' version '2.0.21-1.0.27' apply false
+    id 'androidx.room' version '2.6.1' apply false
+    id 'org.jetbrains.kotlin.plugin.compose' version '2.0.21' apply false
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }
