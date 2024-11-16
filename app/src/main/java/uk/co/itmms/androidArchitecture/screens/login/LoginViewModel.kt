@@ -1,6 +1,9 @@
 package uk.co.itmms.androidArchitecture.screens.login
 
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import uk.co.itmms.androidArchitecture.domain.failures.FailureLogin
 import uk.co.itmms.androidArchitecture.domain.usecases.NoParams
 import uk.co.itmms.androidArchitecture.domain.usecases.login.UseCaseLoginLogin
@@ -8,8 +11,6 @@ import uk.co.itmms.androidArchitecture.domain.usecases.login.UseCaseLoginMonitor
 import uk.co.itmms.androidArchitecture.screens.ViewModelBase
 import uk.co.itmms.androidArchitecture.services.IServiceNavigation
 import uk.co.itmms.androidArchitecture.services.Route
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,28 +37,27 @@ class LoginViewModel @Inject constructor(
 
     sealed interface EventType {
         data class UpdateData(val stateData: StateData) : EventType
-        object ResetData: EventType
+        object ResetData : EventType
         object Login : EventType
     }
 
     init {
         useCaseLoginMonitor.invoke(NoParams, viewModelScope) {
             it.fold({}) { result ->
-                viewModelScope.launch {
-                    result.update.collect { update ->
-                        when (update.updateType) {
-                            UseCaseLoginMonitor.UpdateType.Connected ->
-                                localState = localState.copy(
-                                    data = localState.data.copy(connected = update.value)
-                                )
-                            UseCaseLoginMonitor.UpdateType.Authentication -> {
-                                if (!update.value) {
-                                    backToLogin()
-                                }
+                result.update.onEach { update ->
+                    when (update.updateType) {
+                        UseCaseLoginMonitor.UpdateType.Connected ->
+                            localState = localState.copy(
+                                data = localState.data.copy(connected = update.value)
+                            )
+
+                        UseCaseLoginMonitor.UpdateType.Authentication -> {
+                            if (!update.value) {
+                                backToLogin()
                             }
                         }
                     }
-                }
+                }.launchIn(viewModelScope)
             }
         }
     }
@@ -91,17 +91,15 @@ class LoginViewModel @Inject constructor(
             fakeBackend = localState.data.fakeBackend,
             fakeAuthenticationExpire = localState.data.fakeAuthenticationExpire,
         )
-        viewModelScope.launch {
-            useCaseLoginLogin.invoke(params, viewModelScope) {
-                it.fold(::displayError) {
-                    localState = localState.copy(
-                        data = localState.data.copy(
-                            password = "",
-                            loggingIn = false,
-                        ),
-                    )
-                    openHome()
-                }
+        useCaseLoginLogin.invoke(params, viewModelScope) {
+            it.fold(::displayError) {
+                localState = localState.copy(
+                    data = localState.data.copy(
+                        password = "",
+                        loggingIn = false,
+                    ),
+                )
+                openHome()
             }
         }
     }

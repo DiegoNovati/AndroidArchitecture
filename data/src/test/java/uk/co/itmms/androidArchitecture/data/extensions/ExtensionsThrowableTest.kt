@@ -1,14 +1,16 @@
 package uk.co.itmms.androidArchitecture.data.extensions
 
-import uk.co.itmms.androidArchitecture.data.BaseDataRobolectricTest
-import uk.co.itmms.androidArchitecture.data.datasources.network.NotModifiedException
-import uk.co.itmms.androidArchitecture.data.datasources.network.BackendErrorCode
-import junit.framework.TestCase.*
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNull
+import junit.framework.TestCase.assertTrue
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Test
 import retrofit2.HttpException
 import retrofit2.Response
+import uk.co.itmms.androidArchitecture.data.BaseDataRobolectricTest
+import uk.co.itmms.androidArchitecture.data.datasources.network.BackendErrorCode
+import uk.co.itmms.androidArchitecture.data.datasources.network.NotModifiedException
 import java.io.IOException
 import java.net.SocketTimeoutException
 
@@ -29,7 +31,7 @@ class ExtensionsThrowableTest: BaseDataRobolectricTest() {
     }
 
     @Test
-    fun `SocketTimeoutException to PassApiException`() {
+    fun `SocketTimeoutException to BackendException`() {
         val actual = SocketTimeoutException().toBackendException()
 
         assertEquals(actual.errorCode, BackendErrorCode.Timeout)
@@ -38,7 +40,7 @@ class ExtensionsThrowableTest: BaseDataRobolectricTest() {
     }
 
     @Test
-    fun `IOException to PassApiException`() {
+    fun `IOException to BackendException`() {
         var actual = IOException("Unexpected error").toBackendException()
 
         assertEquals(actual.errorCode, BackendErrorCode.IO)
@@ -47,14 +49,13 @@ class ExtensionsThrowableTest: BaseDataRobolectricTest() {
 
         actual = IOException(NotModifiedException()).toBackendException()
 
-        assertEquals(actual.errorCode, BackendErrorCode.NoDataChanges)
         assertEquals(actual.errorMessage, "Data didn't change")
         assertNull(actual.errorDisplay)
     }
 
     @Test
     // This test uses HttpException and it available only with Robolectric or Android tests
-    fun `HttpException with displayError to PassApiException`() {
+    fun `HttpException with displayError to BackendException`() {
         val errorMessage = "error message"
         val errorDisplayMessage = "error display message"
         val httpException = createHttpException(401, errorMessage, errorDisplayMessage)
@@ -68,7 +69,7 @@ class ExtensionsThrowableTest: BaseDataRobolectricTest() {
 
     @Test
     // This test uses HttpException and it available only with Robolectric or Android tests
-    fun `HttpException without displayError to PassApiException`() {
+    fun `HttpException without displayError to BackendException`() {
         val errorMessage = "error message"
         val httpException = createHttpException(400, errorMessage)
 
@@ -80,7 +81,7 @@ class ExtensionsThrowableTest: BaseDataRobolectricTest() {
     }
 
     @Test
-    fun `any other Exception to PassApiException`() {
+    fun `any other Exception to BackendException`() {
         val errorMessage = "error message"
         val actual = RuntimeException(errorMessage).toBackendException()
 

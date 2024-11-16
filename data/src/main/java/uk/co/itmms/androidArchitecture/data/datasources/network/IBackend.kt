@@ -1,6 +1,5 @@
 package uk.co.itmms.androidArchitecture.data.datasources.network
 
-import uk.co.itmms.androidArchitecture.data.BuildConfig
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.google.gson.GsonBuilder
@@ -11,6 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import uk.co.itmms.androidArchitecture.data.BuildConfig
 import uk.co.itmms.androidArchitecture.data.models.NetAuthLoginRequest
 import uk.co.itmms.androidArchitecture.data.models.NetAuthLoginResponse
 import uk.co.itmms.androidArchitecture.data.models.NetProductsResponse

@@ -8,7 +8,6 @@ enum class BackendErrorCode {
     Http401,
     Http403,
     HttpUnmanaged,
-    NoDataChanges,
     IO,
     Unexpected,
 }

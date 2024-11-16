@@ -25,12 +25,6 @@ class UseCaseLoginLoginTest : BaseDomainTest() {
     private lateinit var mockRepositoryAuthentication: IRepositoryAuthentication
 
     @MockK
-    private lateinit var mockRepositoryCustomers: IRepositoryCustomers
-
-    @MockK
-    private lateinit var mockRepositoryBookings: IRepositoryBookings
-
-    @MockK
     private lateinit var mockRepositoryRuntime: IRepositoryRuntime
 
     private lateinit var useCaseLoginLogin: UseCaseLoginLogin
@@ -44,7 +38,7 @@ class UseCaseLoginLoginTest : BaseDomainTest() {
 
     private val officeBid = "office_bid"
 
-    private val resultLogin = IRepositoryAuthentication.ResultLogin(officeBid)
+    private val result = IRepositoryAuthentication.Result(officeBid)
     private val customerList = listOf(
         Customer(customerBid = "1", name = "Name 1", address = "Address 1"),
         Customer(customerBid = "2", name = "Name 2", address = "Address 2"),
@@ -64,7 +58,7 @@ class UseCaseLoginLoginTest : BaseDomainTest() {
 
     @Test
     fun `WHEN login is successful THEN returns a right value`() = runBlocking {
-        coEvery { mockRepositoryAuthentication.login(any(), any()) } returns resultLogin.right()
+        coEvery { mockRepositoryAuthentication.login(any(), any()) } returns result.right()
         coEvery { mockRepositoryCustomers.getCustomerList(any()) } returns customerList.right()
         coEvery { mockRepositoryBookings.getBookingList(any()) } returns bookingList.right()
 
@@ -109,7 +103,7 @@ class UseCaseLoginLoginTest : BaseDomainTest() {
 
     @Test
     fun `WHEN getCustomerList fails THEN returns a left value`() = runBlocking {
-        coEvery { mockRepositoryAuthentication.login(any(), any()) } returns resultLogin.right()
+        coEvery { mockRepositoryAuthentication.login(any(), any()) } returns result.right()
         coEvery { mockRepositoryCustomers.getCustomerList(any()) } returns RepositoryBackendFailure.BackendProblems.left()
 
         val actual = useCaseLoginLogin.run(params)
@@ -132,7 +126,7 @@ class UseCaseLoginLoginTest : BaseDomainTest() {
 
     @Test
     fun `WHEN getBookingList fails THEN returns a left value`() = runBlocking {
-        coEvery { mockRepositoryAuthentication.login(any(), any()) } returns resultLogin.right()
+        coEvery { mockRepositoryAuthentication.login(any(), any()) } returns result.right()
         coEvery { mockRepositoryCustomers.getCustomerList(any()) } returns customerList.right()
         coEvery { mockRepositoryBookings.getBookingList(any()) } returns RepositoryBackendFailure.ConnectionProblems.left()
 

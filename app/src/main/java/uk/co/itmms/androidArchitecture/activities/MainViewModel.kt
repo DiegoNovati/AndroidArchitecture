@@ -1,11 +1,9 @@
 package uk.co.itmms.androidArchitecture.activities
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import uk.co.itmms.androidArchitecture.services.IServiceNavigation
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import uk.co.itmms.androidArchitecture.services.IServiceNavigation
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,8 +17,6 @@ class MainViewModel @Inject constructor(
         serviceNavigation.setNavController(navController)
 
     fun backButtonPressed() {
-        viewModelScope.launch {
-            serviceNavigation.updateCurrentRoute()
-        }
+        serviceNavigation.updateCurrentRoute()
     }
 }

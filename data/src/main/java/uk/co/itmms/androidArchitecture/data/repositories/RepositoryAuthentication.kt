@@ -18,7 +18,7 @@ class RepositoryAuthentication(
     override suspend fun login(
         userName: String,
         password: String
-    ): Either<FailureRepositoryBackendAuthentication, IRepositoryAuthentication.ResultLogin> =
+    ): Either<FailureRepositoryBackendAuthentication, IRepositoryAuthentication.Result> =
         try {
             dataSourceBackend.login(
                 username = userName,
@@ -29,8 +29,8 @@ class RepositoryAuthentication(
         }
 }
 
-internal fun NetAuthLoginResponse.toResultLogin(): IRepositoryAuthentication.ResultLogin =
-    IRepositoryAuthentication.ResultLogin(
+internal fun NetAuthLoginResponse.toResultLogin(): IRepositoryAuthentication.Result =
+    IRepositoryAuthentication.Result(
         user = User(
             id = this.id,
             username = this.username,
@@ -55,6 +55,5 @@ internal fun BackendException.toRepositoryAuthenticationFailure(): FailureReposi
 
         BackendErrorCode.Http401,
         BackendErrorCode.Http403,
-        BackendErrorCode.NoDataChanges,
         BackendErrorCode.Unexpected -> FailureRepositoryBackendAuthentication.BackendError
     }

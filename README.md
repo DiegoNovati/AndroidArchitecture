@@ -1,7 +1,7 @@
 # Android Architecture
 This is a project used to show how the Android App should be organized.
   
-This project has been developed using Android Studio Bumblebee
+This project has been developed using Android Studio Ladybug with JDK 17
 
 ## Business logic
 The business logic is implemented using Clean Architecture in two different modules:
@@ -58,7 +58,3 @@ To check the release version, use the following command:
 ```bash
 ./gradlew lintRelease
 ```
-
-## IDE
-This App is developed using Android Studio Flamingo with JDK 17
-

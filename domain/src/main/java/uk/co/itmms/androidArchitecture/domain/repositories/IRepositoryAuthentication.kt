@@ -6,10 +6,10 @@ import uk.co.itmms.androidArchitecture.domain.failures.FailureRepositoryBackendA
 
 interface IRepositoryAuthentication {
 
-    data class ResultLogin(
+    data class Result(
         val user: User,
         val token: String,
     )
 
-    suspend fun login(userName: String, password: String): Either<FailureRepositoryBackendAuthentication, ResultLogin>
+    suspend fun login(userName: String, password: String): Either<FailureRepositoryBackendAuthentication, Result>
 }

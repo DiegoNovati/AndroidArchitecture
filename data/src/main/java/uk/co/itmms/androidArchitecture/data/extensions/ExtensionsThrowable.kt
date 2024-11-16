@@ -1,9 +1,9 @@
 package uk.co.itmms.androidArchitecture.data.extensions
 
-import uk.co.itmms.androidArchitecture.data.datasources.network.BackendErrorCode
-import uk.co.itmms.androidArchitecture.data.datasources.network.BackendException
 import org.json.JSONObject
 import retrofit2.HttpException
+import uk.co.itmms.androidArchitecture.data.datasources.network.BackendErrorCode
+import uk.co.itmms.androidArchitecture.data.datasources.network.BackendException
 import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -27,12 +27,7 @@ fun Throwable.toBackendException(): BackendException =
         is SocketTimeoutException -> BackendException(BackendErrorCode.Timeout)
         is SSLHandshakeException -> BackendException(BackendErrorCode.SSLError, this.localizedMessage ?: "")
         is SSLException -> BackendException(BackendErrorCode.SSLError, this.localizedMessage ?: "")
-        is IOException -> {
-            val errorMessage = this.message ?: ""
-            if (errorMessage.contains("NotModifiedException"))
-                BackendException(BackendErrorCode.NoDataChanges, "Data didn't change")
-            else BackendException(BackendErrorCode.IO, errorMessage)
-        }
+        is IOException -> BackendException(BackendErrorCode.IO, this.message ?: "")
         is HttpException -> {
             var errorMessage = ""
             var errorDisplay: String? = null

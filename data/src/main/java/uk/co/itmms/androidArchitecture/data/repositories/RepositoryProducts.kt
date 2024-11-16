@@ -1,13 +1,10 @@
 package uk.co.itmms.androidArchitecture.data.repositories
 
-import arrow.core.Either
 import arrow.core.right
 import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceBackend
 import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceDatabaseProducts
 import uk.co.itmms.androidArchitecture.data.extensions.toDBProductList
 import uk.co.itmms.androidArchitecture.data.extensions.toProductList
-import uk.co.itmms.androidArchitecture.domain.entities.Product
-import uk.co.itmms.androidArchitecture.domain.failures.FailureRepositoryBackend
 import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryProducts
 
 class RepositoryProducts(
@@ -15,15 +12,23 @@ class RepositoryProducts(
     private val dataSourceDatabaseProducts: IDataSourceDatabaseProducts,
 ) : IRepositoryProducts {
 
-    override suspend fun list(): Either<FailureRepositoryBackend, List<Product>> =
-        invokeRepository({
-            val netProductsResponse = dataSourceBackend.getProducts()
-
-            val dbProductList = netProductsResponse.products.toDBProductList()
+    override suspend fun list(): IRepositoryProducts.Result =
+        invokeRepository {
+            dataSourceBackend.getProducts().right()
+        }.fold({ failure ->
+            IRepositoryProducts.Result(
+                offline = true,
+                productList = dataSourceDatabaseProducts.list().toProductList(),
+                failure = failure,
+            )
+        }){ response ->
+            val dbProductList = response.products.toDBProductList()
             dataSourceDatabaseProducts.deleteAll()
             dataSourceDatabaseProducts.insert(dbProductList)
-            dbProductList.toProductList().right()
-        }){
-            dataSourceDatabaseProducts.list().toProductList().right()
+            IRepositoryProducts.Result(
+                offline = false,
+                productList = dbProductList.toProductList(),
+                failure = null,
+            )
         }
 }

@@ -1,9 +1,14 @@
 package uk.co.itmms.androidArchitecture.domain.repositories
 
-import arrow.core.Either
 import uk.co.itmms.androidArchitecture.domain.entities.Product
 import uk.co.itmms.androidArchitecture.domain.failures.FailureRepositoryBackend
 
 interface IRepositoryProducts {
-    suspend fun list(): Either<FailureRepositoryBackend, List<Product>>
+
+    data class Result(
+        val offline: Boolean,
+        val productList: List<Product>,
+        val failure: FailureRepositoryBackend? = null,
+    )
+    suspend fun list(): Result
 }

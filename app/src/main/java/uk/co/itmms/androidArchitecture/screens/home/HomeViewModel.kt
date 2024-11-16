@@ -1,16 +1,17 @@
 package uk.co.itmms.androidArchitecture.screens.home
 
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import uk.co.itmms.androidArchitecture.domain.entities.Booking
 import uk.co.itmms.androidArchitecture.domain.entities.Customer
 import uk.co.itmms.androidArchitecture.domain.usecases.NoParams
-import uk.co.itmms.androidArchitecture.domain.usecases.home.UseCaseHomeMonitor
 import uk.co.itmms.androidArchitecture.domain.usecases.home.UseCaseHomeInit
 import uk.co.itmms.androidArchitecture.domain.usecases.home.UseCaseHomeLogout
+import uk.co.itmms.androidArchitecture.domain.usecases.home.UseCaseHomeMonitor
 import uk.co.itmms.androidArchitecture.screens.ViewModelBase
 import uk.co.itmms.androidArchitecture.services.IServiceNavigation
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,13 +51,11 @@ class HomeViewModel @Inject constructor(
         }
         useCaseHomeMonitor.invoke(NoParams, viewModelScope) {
             it.fold({}) { result ->
-                viewModelScope.launch {
-                    result.connected.collect { connected ->
-                        localState = localState.copy(
-                            data = localState.data.copy(connected = connected)
-                        )
-                    }
-                }
+                result.connected.onEach { connected ->
+                    localState = localState.copy(
+                        data = localState.data.copy(connected = connected)
+                    )
+                }.launchIn(viewModelScope)
             }
         }
     }
