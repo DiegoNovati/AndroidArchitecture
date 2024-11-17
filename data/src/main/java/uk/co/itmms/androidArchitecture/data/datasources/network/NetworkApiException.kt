@@ -1,6 +1,6 @@
 package uk.co.itmms.androidArchitecture.data.datasources.network
 
-enum class PassApiErrorCode {
+enum class NetworkApiErrorCode {
     UnknownHost,
     Timeout,
     SSLError,
@@ -13,8 +13,8 @@ enum class PassApiErrorCode {
     Unexpected,
 }
 
-data class PassApiException(
-    val errorCode: PassApiErrorCode,
+data class NetworkApiException(
+    val errorCode: NetworkApiErrorCode,
     val errorMessage: String = "",
     val errorDisplay: String? = null
 ) : Exception(errorMessage)

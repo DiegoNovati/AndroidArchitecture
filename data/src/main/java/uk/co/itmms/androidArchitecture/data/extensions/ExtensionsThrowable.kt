@@ -1,9 +1,9 @@
 package uk.co.itmms.androidArchitecture.data.extensions
 
-import uk.co.itmms.androidArchitecture.data.datasources.network.PassApiErrorCode
-import uk.co.itmms.androidArchitecture.data.datasources.network.PassApiException
 import org.json.JSONObject
 import retrofit2.HttpException
+import uk.co.itmms.androidArchitecture.data.datasources.network.NetworkApiException
+import uk.co.itmms.androidArchitecture.data.datasources.network.NetworkApiErrorCode
 import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -22,17 +22,17 @@ fun Throwable.fullStackTraceToString(): String {
     }
 }
 
-fun Throwable.toPassApiException(): PassApiException =
+fun Throwable.toNetworkApiException(): NetworkApiException =
     when (this) {
-        is UnknownHostException -> PassApiException(PassApiErrorCode.UnknownHost)
-        is SocketTimeoutException -> PassApiException(PassApiErrorCode.Timeout)
-        is SSLHandshakeException -> PassApiException(PassApiErrorCode.SSLError, this.localizedMessage ?: "")
-        is SSLException -> PassApiException(PassApiErrorCode.SSLError, this.localizedMessage ?: "")
+        is UnknownHostException -> NetworkApiException(NetworkApiErrorCode.UnknownHost)
+        is SocketTimeoutException -> NetworkApiException(NetworkApiErrorCode.Timeout)
+        is SSLHandshakeException -> NetworkApiException(NetworkApiErrorCode.SSLError, this.localizedMessage ?: "")
+        is SSLException -> NetworkApiException(NetworkApiErrorCode.SSLError, this.localizedMessage ?: "")
         is IOException -> {
             val errorMessage = this.message ?: ""
             if (errorMessage.contains("NotModifiedException"))
-                PassApiException(PassApiErrorCode.NoDataChanges, "Data didn't change")
-            else PassApiException(PassApiErrorCode.IO, errorMessage)
+                NetworkApiException(NetworkApiErrorCode.NoDataChanges, "Data didn't change")
+            else NetworkApiException(NetworkApiErrorCode.IO, errorMessage)
         }
         is HttpException -> {
             var errorMessage = ""
@@ -45,11 +45,11 @@ fun Throwable.toPassApiException(): PassApiException =
                 }
             }
             val errorCode = when (this.code()) {
-                400 -> PassApiErrorCode.Http400
-                401 -> PassApiErrorCode.Http401
-                else -> PassApiErrorCode.HttpUnmanaged
+                400 -> NetworkApiErrorCode.Http400
+                401 -> NetworkApiErrorCode.Http401
+                else -> NetworkApiErrorCode.HttpUnmanaged
             }
-            PassApiException(errorCode, errorMessage, errorDisplay)
+            NetworkApiException(errorCode, errorMessage, errorDisplay)
         }
-        else -> PassApiException(PassApiErrorCode.Unexpected, this.message ?: "")
+        else -> NetworkApiException(NetworkApiErrorCode.Unexpected, this.message ?: "")
     }

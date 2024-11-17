@@ -90,6 +90,7 @@ dependencies {
 
     // JUnit
     testImplementation "junit:junit:$junit_version"
+    testImplementation 'org.slf4j:slf4j-log4j12:2.0.16'
 
     // MockK
     testImplementation "io.mockk:mockk:$mockk_version"

@@ -1,9 +1,5 @@
 package uk.co.itmms.androidArchitecture.data.datasources.network
 
-import uk.co.itmms.androidArchitecture.data.BuildConfig
-import uk.co.itmms.androidArchitecture.data.models.NetAuthenticateResponse
-import uk.co.itmms.androidArchitecture.data.models.NetBookingsResponse
-import uk.co.itmms.androidArchitecture.data.models.NetCustomersResponse
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.google.gson.GsonBuilder
@@ -15,10 +11,14 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
+import uk.co.itmms.androidArchitecture.data.BuildConfig
+import uk.co.itmms.androidArchitecture.data.models.NetAuthenticateResponse
+import uk.co.itmms.androidArchitecture.data.models.NetBookingsResponse
+import uk.co.itmms.androidArchitecture.data.models.NetCustomersResponse
 import java.util.concurrent.TimeUnit
 
-fun createPassApi(releaseMode: Boolean, networkFlipperPlugin: NetworkFlipperPlugin? = null): IPassApi =
-    getRetrofit(BuildConfig.BACKEND_URL, releaseMode, networkFlipperPlugin).create(IPassApi::class.java)
+fun createNetworkApi(releaseMode: Boolean, networkFlipperPlugin: NetworkFlipperPlugin? = null): INetworkApi =
+    getRetrofit(BuildConfig.BACKEND_URL, releaseMode, networkFlipperPlugin).create(INetworkApi::class.java)
 
 private val gson = GsonBuilder()
     .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -50,7 +50,7 @@ private fun getHttpClient(releaseMode: Boolean, networkFlipperPlugin: NetworkFli
     return builder.build()
 }
 
-interface IPassApi {
+interface INetworkApi {
 
     @POST("/api/v1/authenticate")
     suspend fun authenticate(

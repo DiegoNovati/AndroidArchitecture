@@ -3,8 +3,8 @@ package uk.co.itmms.androidArchitecture.data.repositories
 import uk.co.itmms.androidArchitecture.data.BaseDataTest
 import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceBackend
 import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceDatabaseCustomers
-import uk.co.itmms.androidArchitecture.data.datasources.network.PassApiErrorCode
-import uk.co.itmms.androidArchitecture.data.datasources.network.PassApiException
+import uk.co.itmms.androidArchitecture.data.datasources.network.NetworkApiErrorCode
+import uk.co.itmms.androidArchitecture.data.datasources.network.NetworkApiException
 import uk.co.itmms.androidArchitecture.data.extensions.toCustomerList
 import uk.co.itmms.androidArchitecture.data.extensions.toDBCustomerList
 import uk.co.itmms.androidArchitecture.data.models.DBCustomer
@@ -69,7 +69,7 @@ class RepositoryCustomersTest : BaseDataTest() {
 
     @Test
     fun `WHEN the regular path fails THEN it returns a left value`() = runBlocking {
-        coEvery { mockDataSourceBackend.getCustomerList(any()) } throws PassApiException(errorCode = PassApiErrorCode.SSLError)
+        coEvery { mockDataSourceBackend.getCustomerList(any()) } throws NetworkApiException(errorCode = NetworkApiErrorCode.SSLError)
 
         val actual = repositoryCustomers.getCustomerList(officeBid)
 
@@ -91,7 +91,7 @@ class RepositoryCustomersTest : BaseDataTest() {
             createDBCustomer("bid1"),
             createDBCustomer("bid2"),
         )
-        coEvery { mockDataSourceBackend.getCustomerList(any()) } throws PassApiException(errorCode = PassApiErrorCode.NoDataChanges)
+        coEvery { mockDataSourceBackend.getCustomerList(any()) } throws NetworkApiException(errorCode = NetworkApiErrorCode.NoDataChanges)
         coEvery { mockDataSourceDatabaseCustomers.list() } returns dbCustomers
 
         val actual = repositoryCustomers.getCustomerList(officeBid)

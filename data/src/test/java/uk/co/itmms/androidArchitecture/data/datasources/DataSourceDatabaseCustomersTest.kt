@@ -2,7 +2,7 @@ package uk.co.itmms.androidArchitecture.data.datasources
 
 import uk.co.itmms.androidArchitecture.data.BaseDataTest
 import uk.co.itmms.androidArchitecture.data.datasources.db.DaoCustomers
-import uk.co.itmms.androidArchitecture.data.datasources.db.IPassDatabase
+import uk.co.itmms.androidArchitecture.data.datasources.db.IAppDatabase
 import uk.co.itmms.androidArchitecture.data.models.DBCustomer
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -17,7 +17,7 @@ import org.junit.Test
 class DataSourceDatabaseCustomersTest: BaseDataTest() {
 
     @MockK
-    private lateinit var mockPassDatabase: IPassDatabase
+    private lateinit var mockPassDatabase: IAppDatabase
 
     @MockK
     private lateinit var mockDaoCustomers: DaoCustomers

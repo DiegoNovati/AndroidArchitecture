@@ -5,9 +5,9 @@ import arrow.core.Either
 interface IRepositoryAuthentication {
 
     sealed class RepositoryAuthenticationFailure {
-        object ConnectionProblems : RepositoryAuthenticationFailure()
-        object BackendProblems : RepositoryAuthenticationFailure()
-        object LoginError: RepositoryAuthenticationFailure()
+        data object ConnectionProblems : RepositoryAuthenticationFailure()
+        data object BackendProblems : RepositoryAuthenticationFailure()
+        data object LoginError: RepositoryAuthenticationFailure()
     }
 
     data class ResultLogin(

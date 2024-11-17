@@ -1,8 +1,8 @@
 package uk.co.itmms.androidArchitecture.data.repositories
 
 import arrow.core.Either
-import uk.co.itmms.androidArchitecture.data.datasources.network.PassApiErrorCode
-import uk.co.itmms.androidArchitecture.data.datasources.network.PassApiException
+import uk.co.itmms.androidArchitecture.data.datasources.network.NetworkApiErrorCode
+import uk.co.itmms.androidArchitecture.data.datasources.network.NetworkApiException
 import uk.co.itmms.androidArchitecture.domain.repositories.RepositoryBackendFailure
 
 /**
@@ -17,9 +17,9 @@ suspend fun <T> invokeRepository(
 ): Either<RepositoryBackendFailure, T>  where T : Any=
     try {
         defaultLambda.invoke()
-    } catch (e: PassApiException) {
+    } catch (e: NetworkApiException) {
         when (e.errorCode) {
-            PassApiErrorCode.NoDataChanges ->
+            NetworkApiErrorCode.NoDataChanges ->
                 onNoDataChanged?.let {
                     // Calling invokeRepository with onNoDataChanged equals null to avoid
                     // infinite recursion
@@ -27,15 +27,15 @@ suspend fun <T> invokeRepository(
                 } ?: run {
                     Either.Left(RepositoryBackendFailure.BackendProblems)
                 }
-            PassApiErrorCode.UnknownHost,
-            PassApiErrorCode.Timeout,
-            PassApiErrorCode.SSLError,
-            PassApiErrorCode.HttpUnmanaged,
-            PassApiErrorCode.IO -> Either.Left(RepositoryBackendFailure.ConnectionProblems)
+            NetworkApiErrorCode.UnknownHost,
+            NetworkApiErrorCode.Timeout,
+            NetworkApiErrorCode.SSLError,
+            NetworkApiErrorCode.HttpUnmanaged,
+            NetworkApiErrorCode.IO -> Either.Left(RepositoryBackendFailure.ConnectionProblems)
 
-            PassApiErrorCode.Http400,
-            PassApiErrorCode.Http401,
-            PassApiErrorCode.Http403,
-            PassApiErrorCode.Unexpected -> Either.Left(RepositoryBackendFailure.BackendProblems)
+            NetworkApiErrorCode.Http400,
+            NetworkApiErrorCode.Http401,
+            NetworkApiErrorCode.Http403,
+            NetworkApiErrorCode.Unexpected -> Either.Left(RepositoryBackendFailure.BackendProblems)
         }
     }

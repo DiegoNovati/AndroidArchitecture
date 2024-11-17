@@ -1,18 +1,19 @@
 package uk.co.itmms.androidArchitecture.domain.usecases.home
 
 import arrow.core.Either
-import uk.co.itmms.androidArchitecture.domain.BaseDomainTest
-import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryAuthentication
-import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryRuntime
-import uk.co.itmms.androidArchitecture.domain.usecases.NoParams
 import io.mockk.coVerify
 import io.mockk.confirmVerified
+import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
-import org.junit.Before
+import org.junit.After
 import org.junit.Test
+import uk.co.itmms.androidArchitecture.domain.BaseDomainTest
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryAuthentication
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositorySession
+import uk.co.itmms.androidArchitecture.domain.usecases.NoParams
 
 class UseCaseHomeLogoutTest: BaseDomainTest() {
 
@@ -20,16 +21,14 @@ class UseCaseHomeLogoutTest: BaseDomainTest() {
     private lateinit var mockRepositoryAuthentication: IRepositoryAuthentication
 
     @MockK
-    private lateinit var mockRepositoryRuntime: IRepositoryRuntime
+    private lateinit var mockRepositorySession: IRepositorySession
 
+    @InjectMockKs
     private lateinit var useCaseHomeLogout: UseCaseHomeLogout
 
-    @Before
-    fun setUp() {
-        useCaseHomeLogout = UseCaseHomeLogout(
-            mockRepositoryDevelopmentLogger, mockRepositoryDevelopmentAnalytics, mockRepositoryAuthentication,
-            mockRepositoryRuntime,
-        )
+    @After
+    fun tearDown() {
+        confirmVerified(mockRepositoryAuthentication, mockRepositorySession)
     }
 
     @Test
@@ -41,8 +40,7 @@ class UseCaseHomeLogoutTest: BaseDomainTest() {
 
         coVerify(exactly = 1) {
             mockRepositoryAuthentication.logout()
-            mockRepositoryRuntime.clear()
+            mockRepositorySession.clear()
         }
-        confirmVerified(mockRepositoryAuthentication, mockRepositoryRuntime)
     }
 }

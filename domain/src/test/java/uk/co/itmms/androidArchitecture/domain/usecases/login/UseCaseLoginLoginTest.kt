@@ -2,22 +2,28 @@ package uk.co.itmms.androidArchitecture.domain.usecases.login
 
 import arrow.core.left
 import arrow.core.right
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.confirmVerified
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.fail
+import kotlinx.coroutines.runBlocking
+import org.junit.After
+import org.junit.Test
 import uk.co.itmms.androidArchitecture.domain.BaseDomainTest
 import uk.co.itmms.androidArchitecture.domain.entities.Booking
 import uk.co.itmms.androidArchitecture.domain.entities.BookingStatus
 import uk.co.itmms.androidArchitecture.domain.entities.Customer
 import uk.co.itmms.androidArchitecture.domain.failures.FailureLogin
-import uk.co.itmms.androidArchitecture.domain.repositories.*
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.confirmVerified
-import io.mockk.impl.annotations.MockK
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.fail
-import kotlinx.coroutines.runBlocking
-import org.junit.Before
-import org.junit.Test
-import java.util.*
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryAuthentication
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryBookings
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryCustomers
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryRuntime
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositorySession
+import uk.co.itmms.androidArchitecture.domain.repositories.RepositoryBackendFailure
+import java.util.Date
 
 class UseCaseLoginLoginTest : BaseDomainTest() {
 
@@ -33,6 +39,10 @@ class UseCaseLoginLoginTest : BaseDomainTest() {
     @MockK
     private lateinit var mockRepositoryRuntime: IRepositoryRuntime
 
+    @MockK
+    private lateinit var mockRepositorySession: IRepositorySession
+
+    @InjectMockKs
     private lateinit var useCaseLoginLogin: UseCaseLoginLogin
 
     private val params = UseCaseLoginLogin.Params(
@@ -54,11 +64,10 @@ class UseCaseLoginLoginTest : BaseDomainTest() {
         Booking(bookingBid= 2, customerBid = "2", status = BookingStatus.Scheduled, start = Date(), end = Date()),
     )
 
-    @Before
-    fun setUp() {
-        useCaseLoginLogin = UseCaseLoginLogin(
-            mockRepositoryDevelopmentLogger, mockRepositoryDevelopmentAnalytics, mockRepositoryAuthentication,
-            mockRepositoryCustomers, mockRepositoryBookings, mockRepositoryRuntime,
+    @After
+    fun tearDown() {
+        confirmVerified(mockRepositoryAuthentication, mockRepositoryCustomers,
+            mockRepositoryBookings, mockRepositoryRuntime,
         )
     }
 
@@ -76,15 +85,12 @@ class UseCaseLoginLoginTest : BaseDomainTest() {
             mockRepositoryAuthentication.login(params.username, params.password)
             mockRepositoryCustomers.getCustomerList(officeBid)
             mockRepositoryBookings.getBookingList(officeBid)
-            mockRepositoryRuntime.setOfficeBid(officeBid)
-            mockRepositoryRuntime.setCustomerList(customerList)
-            mockRepositoryRuntime.setBookingList(bookingList)
+            mockRepositorySession.officeBid = officeBid
+            mockRepositorySession.customerList = customerList
+            mockRepositorySession.bookingList = bookingList
             mockRepositoryRuntime.setAuthenticated(true)
             mockRepositoryRuntime.setFakeAuthenticationExpire(params.fakeAuthenticationExpire)
         }
-        confirmVerified(mockRepositoryAuthentication, mockRepositoryCustomers,
-            mockRepositoryBookings, mockRepositoryRuntime,
-        )
     }
 
     @Test
@@ -102,9 +108,6 @@ class UseCaseLoginLoginTest : BaseDomainTest() {
         coVerify(exactly = 1) {
             mockRepositoryAuthentication.login(params.username, params.password)
         }
-        confirmVerified(mockRepositoryAuthentication, mockRepositoryCustomers,
-            mockRepositoryBookings, mockRepositoryRuntime,
-        )
     }
 
     @Test
@@ -125,9 +128,6 @@ class UseCaseLoginLoginTest : BaseDomainTest() {
             mockRepositoryCustomers.getCustomerList(any())
 
         }
-        confirmVerified(mockRepositoryAuthentication, mockRepositoryCustomers,
-            mockRepositoryBookings, mockRepositoryRuntime,
-        )
     }
 
     @Test
@@ -149,9 +149,6 @@ class UseCaseLoginLoginTest : BaseDomainTest() {
             mockRepositoryCustomers.getCustomerList(officeBid)
             mockRepositoryBookings.getBookingList(officeBid)
         }
-        confirmVerified(mockRepositoryAuthentication, mockRepositoryCustomers,
-            mockRepositoryBookings, mockRepositoryRuntime,
-        )
     }
 
     @Test

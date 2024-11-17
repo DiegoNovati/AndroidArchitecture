@@ -1,27 +1,30 @@
 package uk.co.itmms.androidArchitecture.data.datasources
 
-import uk.co.itmms.androidArchitecture.data.BaseDataTest
-import uk.co.itmms.androidArchitecture.data.datasources.network.IPassApi
-import uk.co.itmms.androidArchitecture.data.datasources.network.PassApiException
-import uk.co.itmms.androidArchitecture.data.models.NetAuthenticateOffice
-import uk.co.itmms.androidArchitecture.data.models.NetAuthenticateResponse
-import uk.co.itmms.androidArchitecture.data.models.NetBookingsResponse
-import uk.co.itmms.androidArchitecture.data.models.NetCustomersResponse
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
-import junit.framework.TestCase.*
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.assertTrue
+import junit.framework.TestCase.fail
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import uk.co.itmms.androidArchitecture.data.BaseDataTest
+import uk.co.itmms.androidArchitecture.data.datasources.network.INetworkApi
+import uk.co.itmms.androidArchitecture.data.datasources.network.NetworkApiException
+import uk.co.itmms.androidArchitecture.data.models.NetAuthenticateOffice
+import uk.co.itmms.androidArchitecture.data.models.NetAuthenticateResponse
+import uk.co.itmms.androidArchitecture.data.models.NetBookingsResponse
+import uk.co.itmms.androidArchitecture.data.models.NetCustomersResponse
 
 class DataSourceBackendTest : BaseDataTest() {
 
     @MockK
-    private lateinit var mockPassApi: IPassApi
+    private lateinit var mockPassApi: INetworkApi
 
     private lateinit var dataSourceBackend: DataSourceBackend
 
@@ -58,14 +61,14 @@ class DataSourceBackendTest : BaseDataTest() {
     }
 
     @Test
-    fun `WHEN the authentication fails THEN it returns a PassApiException`() =
+    fun `WHEN the authentication fails THEN it returns a NetworkApiException`() =
         runBlocking(Dispatchers.Unconfined) {
             coEvery { mockPassApi.authenticate(any(), any(), any()) } throws RuntimeException()
 
             try {
                 dataSourceBackend.authenticate(username, password)
-                fail("A PassApiException is expected")
-            } catch (_: PassApiException) {
+                fail("A NetworkApiException is expected")
+            } catch (_: NetworkApiException) {
             }
 
             coVerify(exactly = 1) {
@@ -126,13 +129,13 @@ class DataSourceBackendTest : BaseDataTest() {
     }
 
     @Test
-    fun `WHEN getCustomerList fails THEN it returns a PassApiException`() = runBlocking {
+    fun `WHEN getCustomerList fails THEN it returns a NetworkApiException`() = runBlocking {
         coEvery { mockPassApi.getCustomerList(any(), any()) } throws RuntimeException("error !")
 
         try {
             dataSourceBackend.getCustomerList(officeBid)
-            fail("A PassApiException is expected")
-        } catch (_: PassApiException) { }
+            fail("A NetworkApiException is expected")
+        } catch (_: NetworkApiException) { }
     }
 
     @Test
@@ -151,12 +154,12 @@ class DataSourceBackendTest : BaseDataTest() {
     }
 
     @Test
-    fun `WHEN getBookingList fails THEN it returns a PassApiException`() = runBlocking {
+    fun `WHEN getBookingList fails THEN it returns a NetworkApiException`() = runBlocking {
         coEvery { mockPassApi.getBookingList(any(), any()) } throws RuntimeException("error !")
 
         try {
             dataSourceBackend.getBookingList(officeBid)
-            fail("A PassApiException is expected")
-        } catch (_: PassApiException) { }
+            fail("A NetworkApiException is expected")
+        } catch (_: NetworkApiException) { }
     }
 }

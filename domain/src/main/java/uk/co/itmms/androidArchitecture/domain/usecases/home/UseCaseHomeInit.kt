@@ -7,16 +7,16 @@ import uk.co.itmms.androidArchitecture.domain.entities.Customer
 import uk.co.itmms.androidArchitecture.domain.failures.FailureHome
 import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryDevelopmentAnalytics
 import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryDevelopmentLogger
-import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryRuntime
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositorySession
 import uk.co.itmms.androidArchitecture.domain.usecases.NoParams
 import uk.co.itmms.androidArchitecture.domain.usecases.UseCaseBase
 
 class UseCaseHomeInit(
-    repositoryLogger: IRepositoryDevelopmentLogger,
-    repositoryAnalytics: IRepositoryDevelopmentAnalytics,
-    private val repositoryRuntime: IRepositoryRuntime,
+    repositoryDevelopmentLogger: IRepositoryDevelopmentLogger,
+    repositoryDevelopmentAnalytics: IRepositoryDevelopmentAnalytics,
+    private val repositorySession: IRepositorySession,
 ) : UseCaseBase<NoParams, UseCaseHomeInit.Result, FailureHome>(
-    repositoryLogger, repositoryAnalytics,
+    repositoryDevelopmentLogger, repositoryDevelopmentAnalytics,
 ) {
     data class Result(
         val customerList: List<Customer>,
@@ -25,7 +25,7 @@ class UseCaseHomeInit(
 
     override suspend fun run(params: NoParams): Either<FailureHome, Result> =
         Result(
-            customerList = repositoryRuntime.getCustomerList(),
-            bookingList = repositoryRuntime.getBookingList(),
+            customerList = repositorySession.customerList,
+            bookingList = repositorySession.bookingList,
         ).right()
 }

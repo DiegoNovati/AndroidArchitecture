@@ -1,13 +1,18 @@
 package uk.co.itmms.androidArchitecture.data.datasources.db
 
 import android.content.Context
-import androidx.room.*
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 import uk.co.itmms.androidArchitecture.data.models.DBBooking
 import uk.co.itmms.androidArchitecture.data.models.DBCustomer
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
-interface IPassDatabase {
+interface IAppDatabase {
     fun daoCustomers(): DaoCustomers
     fun daoBookings(): DaoBookings
 }
@@ -26,16 +31,16 @@ interface IPassDatabase {
     exportSchema = true
 )
 @TypeConverters(RoomConverters::class)
-abstract class PassDatabase : IPassDatabase, RoomDatabase() {
+abstract class AppDatabase : IAppDatabase, RoomDatabase() {
     abstract override fun daoCustomers(): DaoCustomers
     abstract override fun daoBookings(): DaoBookings
 }
 
-fun openDatabase(applicationContext: Context): PassDatabase =
+fun openDatabase(applicationContext: Context): AppDatabase =
     Room
         .databaseBuilder(
             applicationContext,
-            PassDatabase::class.java,
+            AppDatabase::class.java,
             "PassDatabase.db"
         )
         .build()

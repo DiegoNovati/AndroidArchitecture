@@ -1,6 +1,6 @@
 package uk.co.itmms.androidArchitecture.data.datasources
 
-import uk.co.itmms.androidArchitecture.data.datasources.db.IPassDatabase
+import uk.co.itmms.androidArchitecture.data.datasources.db.IAppDatabase
 import uk.co.itmms.androidArchitecture.data.models.DBBooking
 import uk.co.itmms.androidArchitecture.data.models.DBBookingStatus
 import uk.co.itmms.androidArchitecture.data.models.DBCustomer
@@ -28,7 +28,7 @@ interface IDataSourceDatabaseBookings {
 }
 
 class DataSourceDatabaseCustomers(
-    private val passDatabase: IPassDatabase,
+    private val passDatabase: IAppDatabase,
 ): IDataSourceDatabaseCustomers {
 
     override suspend fun list(): List<DBCustomer> =
@@ -72,7 +72,7 @@ class DataSourceDatabaseCustomers(
 }
 
 class DataSourceDatabaseBookings(
-    private val passDatabase: IPassDatabase,
+    private val passDatabase: IAppDatabase,
 ): IDataSourceDatabaseBookings {
 
     override suspend fun list(): List<DBBooking> =

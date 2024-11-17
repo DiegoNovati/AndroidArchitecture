@@ -1,40 +1,39 @@
 package uk.co.itmms.androidArchitecture.data.repositories
 
-import uk.co.itmms.androidArchitecture.data.BaseDataTest
-import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceBackend
-import uk.co.itmms.androidArchitecture.data.datasources.network.PassApiErrorCode
-import uk.co.itmms.androidArchitecture.data.datasources.network.PassApiException
-import uk.co.itmms.androidArchitecture.data.models.NetAuthenticateOffice
-import uk.co.itmms.androidArchitecture.data.models.NetAuthenticateOfficeCdn
-import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryAuthentication
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
+import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
+import junit.framework.TestCase.fail
 import kotlinx.coroutines.runBlocking
-import org.junit.Before
+import org.junit.After
 import org.junit.Test
+import uk.co.itmms.androidArchitecture.data.BaseDataTest
+import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceBackend
+import uk.co.itmms.androidArchitecture.data.datasources.network.NetworkApiErrorCode
+import uk.co.itmms.androidArchitecture.data.datasources.network.NetworkApiException
+import uk.co.itmms.androidArchitecture.data.models.NetAuthenticateOffice
+import uk.co.itmms.androidArchitecture.data.models.NetAuthenticateOfficeCdn
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryAuthentication
 
 class RepositoryAuthenticationTest : BaseDataTest() {
 
     @MockK
     private lateinit var mockDataSourceBackend: IDataSourceBackend
 
+    @InjectMockKs
     private lateinit var repositoryAuthentication: RepositoryAuthentication
 
     private val username = "username"
-
     private val password = "password"
-
     private val officeBid = "officeBid"
 
-    @Before
-    fun setUp() {
-        repositoryAuthentication = RepositoryAuthentication(
-            mockDataSourceBackend
-        )
+    @After
+    fun tearDown() {
+        confirmVerified(mockDataSourceBackend)
     }
 
     @Test
@@ -48,14 +47,15 @@ class RepositoryAuthenticationTest : BaseDataTest() {
         val actual = repositoryAuthentication.login(username, password)
 
         assertTrue(actual.isRight())
-        actual.fold({}){
-            assertEquals(officeBid, it.officeBid)
+        actual.fold({
+            fail("Unexpected failure")
+        }){ result ->
+            assertEquals(officeBid, result.officeBid)
         }
 
         coVerify(exactly = 1) {
             mockDataSourceBackend.authenticate(username, password)
         }
-        confirmVerified(mockDataSourceBackend)
     }
 
     @Test
@@ -69,12 +69,13 @@ class RepositoryAuthenticationTest : BaseDataTest() {
         assertTrue(actual.isLeft())
         actual.fold({
             assertEquals(IRepositoryAuthentication.RepositoryAuthenticationFailure.LoginError, it)
-        }){}
+        }){
+            fail("Unexpected success")
+        }
 
         coVerify(exactly = 1) {
             mockDataSourceBackend.authenticate(username, password)
         }
-        confirmVerified(mockDataSourceBackend)
     }
 
     @Test
@@ -90,12 +91,13 @@ class RepositoryAuthenticationTest : BaseDataTest() {
         assertTrue(actual.isLeft())
         actual.fold({
             assertEquals(IRepositoryAuthentication.RepositoryAuthenticationFailure.LoginError, it)
-        }){}
+        }){
+            fail("Unexpected success")
+        }
 
         coVerify(exactly = 1) {
             mockDataSourceBackend.authenticate(username, password)
         }
-        confirmVerified(mockDataSourceBackend)
     }
 
     @Test
@@ -105,48 +107,47 @@ class RepositoryAuthenticationTest : BaseDataTest() {
         coVerify {
             mockDataSourceBackend.logout()
         }
-        confirmVerified(mockDataSourceBackend)
     }
 
     @Test
     fun `testing toRepositoryAuthenticationFailure`() {
-        var actual = PassApiException(errorCode = PassApiErrorCode.UnknownHost).toRepositoryAuthenticationFailure()
+        var actual = NetworkApiException(errorCode = NetworkApiErrorCode.UnknownHost).toRepositoryAuthenticationFailure()
 
         assertEquals(IRepositoryAuthentication.RepositoryAuthenticationFailure.ConnectionProblems, actual)
 
-        actual = PassApiException(errorCode = PassApiErrorCode.Timeout).toRepositoryAuthenticationFailure()
+        actual = NetworkApiException(errorCode = NetworkApiErrorCode.Timeout).toRepositoryAuthenticationFailure()
 
         assertEquals(IRepositoryAuthentication.RepositoryAuthenticationFailure.ConnectionProblems, actual)
 
-        actual = PassApiException(errorCode = PassApiErrorCode.SSLError).toRepositoryAuthenticationFailure()
+        actual = NetworkApiException(errorCode = NetworkApiErrorCode.SSLError).toRepositoryAuthenticationFailure()
 
         assertEquals(IRepositoryAuthentication.RepositoryAuthenticationFailure.ConnectionProblems, actual)
 
-        actual = PassApiException(errorCode = PassApiErrorCode.HttpUnmanaged).toRepositoryAuthenticationFailure()
+        actual = NetworkApiException(errorCode = NetworkApiErrorCode.HttpUnmanaged).toRepositoryAuthenticationFailure()
 
         assertEquals(IRepositoryAuthentication.RepositoryAuthenticationFailure.ConnectionProblems, actual)
 
-        actual = PassApiException(errorCode = PassApiErrorCode.IO).toRepositoryAuthenticationFailure()
+        actual = NetworkApiException(errorCode = NetworkApiErrorCode.IO).toRepositoryAuthenticationFailure()
 
         assertEquals(IRepositoryAuthentication.RepositoryAuthenticationFailure.ConnectionProblems, actual)
 
-        actual = PassApiException(errorCode = PassApiErrorCode.Http400).toRepositoryAuthenticationFailure()
+        actual = NetworkApiException(errorCode = NetworkApiErrorCode.Http400).toRepositoryAuthenticationFailure()
 
         assertEquals(IRepositoryAuthentication.RepositoryAuthenticationFailure.BackendProblems, actual)
 
-        actual = PassApiException(errorCode = PassApiErrorCode.Http401).toRepositoryAuthenticationFailure()
+        actual = NetworkApiException(errorCode = NetworkApiErrorCode.Http401).toRepositoryAuthenticationFailure()
 
         assertEquals(IRepositoryAuthentication.RepositoryAuthenticationFailure.LoginError, actual)
 
-        actual = PassApiException(errorCode = PassApiErrorCode.Http403).toRepositoryAuthenticationFailure()
+        actual = NetworkApiException(errorCode = NetworkApiErrorCode.Http403).toRepositoryAuthenticationFailure()
 
         assertEquals(IRepositoryAuthentication.RepositoryAuthenticationFailure.BackendProblems, actual)
 
-        actual = PassApiException(errorCode = PassApiErrorCode.NoDataChanges).toRepositoryAuthenticationFailure()
+        actual = NetworkApiException(errorCode = NetworkApiErrorCode.NoDataChanges).toRepositoryAuthenticationFailure()
 
         assertEquals(IRepositoryAuthentication.RepositoryAuthenticationFailure.BackendProblems, actual)
 
-        actual = PassApiException(errorCode = PassApiErrorCode.Unexpected).toRepositoryAuthenticationFailure()
+        actual = NetworkApiException(errorCode = NetworkApiErrorCode.Unexpected).toRepositoryAuthenticationFailure()
 
         assertEquals(IRepositoryAuthentication.RepositoryAuthenticationFailure.BackendProblems, actual)
     }

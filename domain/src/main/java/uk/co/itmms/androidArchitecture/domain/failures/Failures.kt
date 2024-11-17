@@ -14,13 +14,13 @@ data class UnexpectedError(val e: Throwable) : BaseFailure()
 sealed class BaseFailure: FailureTest, FailureLogin, FailureHome
 
 sealed interface FailureTest {
-    object UnknownProblem : FailureTest
+    data object UnknownProblem : FailureTest
 }
 
 sealed interface FailureLogin {
-    object ConnectionProblems : FailureLogin
-    object BackendProblems : FailureLogin
-    object LoginError : FailureLogin
+    data object ConnectionProblems : FailureLogin
+    data object BackendProblems : FailureLogin
+    data object LoginError : FailureLogin
 }
 
 sealed interface FailureHome

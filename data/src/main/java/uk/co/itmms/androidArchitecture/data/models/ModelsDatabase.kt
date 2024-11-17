@@ -3,31 +3,31 @@ package uk.co.itmms.androidArchitecture.data.models
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.*
+import java.util.Date
 
 object TableCustomers {
-    const val tableName = "customers"
-    const val fieldBid = "bid"
-    const val fieldUuid = "uuid"
-    const val fieldTitle = "title"
-    const val fieldFirstName = "firstname"
-    const val fieldLocation = "location"
+    const val TABLE_NAME = "customers"
+    const val FIELD_BID = "bid"
+    const val FIELD_UUID = "uuid"
+    const val FIELD_TITLE = "title"
+    const val FIELD_FIRST_NAME = "firstname"
+    const val FIELD_LOCATION = "location"
 }
 
 @Entity(
-    tableName = TableCustomers.tableName,
+    tableName = TableCustomers.TABLE_NAME,
 )
 data class DBCustomer(
     @PrimaryKey(autoGenerate = false)
-    @ColumnInfo(name = TableCustomers.fieldBid)
+    @ColumnInfo(name = TableCustomers.FIELD_BID)
     val bid: String,
-    @ColumnInfo(name = TableCustomers.fieldUuid)
+    @ColumnInfo(name = TableCustomers.FIELD_UUID)
     val uuid: String,
-    @ColumnInfo(name = TableCustomers.fieldTitle)
+    @ColumnInfo(name = TableCustomers.FIELD_TITLE)
     val title: String?,
-    @ColumnInfo(name = TableCustomers.fieldFirstName)
+    @ColumnInfo(name = TableCustomers.FIELD_FIRST_NAME)
     val firstname: String?,
-    @ColumnInfo(name = TableCustomers.fieldLocation)
+    @ColumnInfo(name = TableCustomers.FIELD_LOCATION)
     val location: String?,
 ) {
     val name: String
@@ -48,26 +48,26 @@ enum class DBBookingStatus {
 }
 
 object TableBookings {
-    const val tableName = "bookings"
-    const val fieldCustomerBid = "customerBid"
-    const val fieldStatus = "status"
-    const val fieldStart = "start"
-    const val fieldEnd = "end"
+    const val TABLE_NAME = "bookings"
+    const val FIELD_CUSTOMER_BID = "customerBid"
+    const val FIELD_STATUS = "status"
+    const val FIELD_START = "start"
+    const val FIELD_END = "end"
 }
 
 @Entity(
-    tableName = TableBookings.tableName,
+    tableName = TableBookings.TABLE_NAME,
 )
 data class DBBooking(
     @PrimaryKey(autoGenerate = false)
     val id: Long,
-    @ColumnInfo(name = TableBookings.fieldCustomerBid)
+    @ColumnInfo(name = TableBookings.FIELD_CUSTOMER_BID)
     val customerBid: String,
-    @ColumnInfo(name = TableBookings.fieldStatus)
+    @ColumnInfo(name = TableBookings.FIELD_STATUS)
     val status: DBBookingStatus,
-    @ColumnInfo(name = TableBookings.fieldStart)
+    @ColumnInfo(name = TableBookings.FIELD_START)
     val start: Date,
-    @ColumnInfo(name = TableBookings.fieldEnd)
+    @ColumnInfo(name = TableBookings.FIELD_END)
     val end: Date,
 )
 

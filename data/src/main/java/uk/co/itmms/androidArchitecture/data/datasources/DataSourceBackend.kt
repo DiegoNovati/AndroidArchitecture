@@ -1,18 +1,18 @@
 package uk.co.itmms.androidArchitecture.data.datasources
 
-import uk.co.itmms.androidArchitecture.data.datasources.network.IPassApi
-import uk.co.itmms.androidArchitecture.data.extensions.toPassApiException
+import okhttp3.Credentials
+import uk.co.itmms.androidArchitecture.data.datasources.network.INetworkApi
+import uk.co.itmms.androidArchitecture.data.extensions.toNetworkApiException
 import uk.co.itmms.androidArchitecture.data.models.NetAuthenticateOffice
 import uk.co.itmms.androidArchitecture.data.models.NetBookingsResponse
 import uk.co.itmms.androidArchitecture.data.models.NetCustomersResponse
-import okhttp3.Credentials
 
-// This invoker returns a value or a PassApiException.
-private suspend fun <T : Any> passApiInvoker(passApi: suspend () -> T): T =
+// This invoker returns a value or a NetworkApiException.
+private suspend fun <T : Any> networkApiInvoker(passApi: suspend () -> T): T =
     try {
         passApi.invoke()
     } catch (e: Throwable) {
-        throw e.toPassApiException()
+        throw e.toNetworkApiException()
     }
 
 interface IDataSourceBackend {
@@ -23,13 +23,13 @@ interface IDataSourceBackend {
 }
 
 class DataSourceBackend(
-    private val passApi: IPassApi,
+    private val passApi: INetworkApi,
 ): IDataSourceBackend {
 
     internal var authorization = ""
 
     override suspend fun authenticate(username: String, password: String): List<NetAuthenticateOffice> {
-        val authenticateResponse = passApiInvoker {
+        val authenticateResponse = networkApiInvoker {
             passApi.authenticate(auth = Credentials.basic(username, password))
         }
         authorization = "Bearer ${authenticateResponse.token}"
@@ -41,12 +41,12 @@ class DataSourceBackend(
     }
 
     override suspend fun getCustomerList(officeBid: String): NetCustomersResponse =
-        passApiInvoker {
+        networkApiInvoker {
             passApi.getCustomerList(authorization, officeBid)
         }
 
     override suspend fun getBookingList(officeBid: String): NetBookingsResponse =
-        passApiInvoker {
+        networkApiInvoker {
             passApi.getBookingList(authorization, officeBid)
         }
 }

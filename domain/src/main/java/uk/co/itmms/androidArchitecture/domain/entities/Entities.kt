@@ -9,9 +9,9 @@ data class Customer(
 )
 
 sealed class BookingStatus {
-    object Scheduled: BookingStatus()
-    object Started: BookingStatus()
-    object Completed: BookingStatus()
+    data object Scheduled: BookingStatus()
+    data object Started: BookingStatus()
+    data object Completed: BookingStatus()
 }
 
 data class Booking(

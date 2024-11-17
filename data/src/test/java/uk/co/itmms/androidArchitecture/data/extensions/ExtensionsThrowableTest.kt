@@ -1,14 +1,16 @@
 package uk.co.itmms.androidArchitecture.data.extensions
 
-import uk.co.itmms.androidArchitecture.data.BaseDataRobolectricTest
-import uk.co.itmms.androidArchitecture.data.datasources.network.NotModifiedException
-import uk.co.itmms.androidArchitecture.data.datasources.network.PassApiErrorCode
-import junit.framework.TestCase.*
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNull
+import junit.framework.TestCase.assertTrue
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Test
 import retrofit2.HttpException
 import retrofit2.Response
+import uk.co.itmms.androidArchitecture.data.BaseDataRobolectricTest
+import uk.co.itmms.androidArchitecture.data.datasources.network.NotModifiedException
+import uk.co.itmms.androidArchitecture.data.datasources.network.NetworkApiErrorCode
 import java.io.IOException
 import java.net.SocketTimeoutException
 
@@ -29,62 +31,62 @@ class ExtensionsThrowableTest: BaseDataRobolectricTest() {
     }
 
     @Test
-    fun `SocketTimeoutException to PassApiException`() {
-        val actual = SocketTimeoutException().toPassApiException()
+    fun `SocketTimeoutException to NetworkApiException`() {
+        val actual = SocketTimeoutException().toNetworkApiException()
 
-        assertEquals(actual.errorCode, PassApiErrorCode.Timeout)
+        assertEquals(actual.errorCode, NetworkApiErrorCode.Timeout)
         assertEquals(actual.errorMessage, "")
         assertNull(actual.errorDisplay)
     }
 
     @Test
-    fun `IOException to PassApiException`() {
-        var actual = IOException("Unexpected error").toPassApiException()
+    fun `IOException to NetworkApiException`() {
+        var actual = IOException("Unexpected error").toNetworkApiException()
 
-        assertEquals(actual.errorCode, PassApiErrorCode.IO)
+        assertEquals(actual.errorCode, NetworkApiErrorCode.IO)
         assertEquals(actual.errorMessage, "Unexpected error")
         assertNull(actual.errorDisplay)
 
-        actual = IOException(NotModifiedException()).toPassApiException()
+        actual = IOException(NotModifiedException()).toNetworkApiException()
 
-        assertEquals(actual.errorCode, PassApiErrorCode.NoDataChanges)
+        assertEquals(actual.errorCode, NetworkApiErrorCode.NoDataChanges)
         assertEquals(actual.errorMessage, "Data didn't change")
         assertNull(actual.errorDisplay)
     }
 
     @Test
     // This test uses HttpException and it available only with Robolectric or Android tests
-    fun `HttpException with displayError to PassApiException`() {
+    fun `HttpException with displayError to NetworkApiException`() {
         val errorMessage = "error message"
         val errorDisplayMessage = "error display message"
         val httpException = createHttpException(401, errorMessage, errorDisplayMessage)
 
-        val actual = httpException.toPassApiException()
+        val actual = httpException.toNetworkApiException()
 
-        assertEquals(actual.errorCode, PassApiErrorCode.Http401)
+        assertEquals(actual.errorCode, NetworkApiErrorCode.Http401)
         assertEquals(actual.errorMessage, errorMessage)
         assertEquals(actual.errorDisplay, errorDisplayMessage)
     }
 
     @Test
     // This test uses HttpException and it available only with Robolectric or Android tests
-    fun `HttpException without displayError to PassApiException`() {
+    fun `HttpException without displayError to NetworkApiException`() {
         val errorMessage = "error message"
         val httpException = createHttpException(400, errorMessage)
 
-        val actual = httpException.toPassApiException()
+        val actual = httpException.toNetworkApiException()
 
-        assertEquals(actual.errorCode, PassApiErrorCode.Http400)
+        assertEquals(actual.errorCode, NetworkApiErrorCode.Http400)
         assertEquals(actual.errorMessage, errorMessage)
         assertNull(actual.errorDisplay)
     }
 
     @Test
-    fun `any other Exception to PassApiException`() {
+    fun `any other Exception to NetworkApiException`() {
         val errorMessage = "error message"
-        val actual = RuntimeException(errorMessage).toPassApiException()
+        val actual = RuntimeException(errorMessage).toNetworkApiException()
 
-        assertEquals(actual.errorCode, PassApiErrorCode.Unexpected)
+        assertEquals(actual.errorCode, NetworkApiErrorCode.Unexpected)
         assertEquals(actual.errorMessage, errorMessage)
         assertNull(actual.errorDisplay)
     }

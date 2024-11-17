@@ -1,18 +1,28 @@
 package uk.co.itmms.androidArchitecture.domain.usecases.login
 
-import uk.co.itmms.androidArchitecture.domain.BaseDomainTest
-import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryNetworkMonitor
-import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryRuntime
-import uk.co.itmms.androidArchitecture.domain.usecases.NoParams
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
+import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
-import junit.framework.TestCase.*
-import kotlinx.coroutines.flow.*
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertTrue
+import junit.framework.TestCase.fail
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.runBlocking
-import org.junit.Before
+import org.junit.After
 import org.junit.Test
+import uk.co.itmms.androidArchitecture.domain.BaseDomainTest
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryNetworkMonitor
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryRuntime
+import uk.co.itmms.androidArchitecture.domain.repositories.IRepositorySession
+import uk.co.itmms.androidArchitecture.domain.usecases.NoParams
 
 class UseCaseLoginMonitorTest : BaseDomainTest() {
 
@@ -22,14 +32,15 @@ class UseCaseLoginMonitorTest : BaseDomainTest() {
     @MockK
     private lateinit var mockRepositoryRuntime: IRepositoryRuntime
 
+    @MockK
+    private lateinit var mockRepositorySession: IRepositorySession
+
+    @InjectMockKs
     private lateinit var useCaseLoginMonitor: UseCaseLoginMonitor
 
-    @Before
-    fun setUp() {
-        useCaseLoginMonitor = UseCaseLoginMonitor(
-            mockRepositoryDevelopmentLogger, mockRepositoryDevelopmentAnalytics, mockRepositoryNetworkMonitor,
-            mockRepositoryRuntime,
-        )
+    @After
+    fun tearDown() {
+        confirmVerified(mockRepositoryNetworkMonitor, mockRepositoryRuntime, mockRepositorySession)
     }
 
     @Test
@@ -50,9 +61,8 @@ class UseCaseLoginMonitorTest : BaseDomainTest() {
         coVerify(exactly = 1) {
             mockRepositoryNetworkMonitor.monitor()
             mockRepositoryRuntime.isAuthenticatedFlow()
-            mockRepositoryRuntime.clear()
+            mockRepositorySession.clear()
         }
-        confirmVerified(mockRepositoryNetworkMonitor, mockRepositoryRuntime)
     }
 
     @Test
@@ -73,8 +83,7 @@ class UseCaseLoginMonitorTest : BaseDomainTest() {
         coVerify(exactly = 1) {
             mockRepositoryNetworkMonitor.monitor()
             mockRepositoryRuntime.isAuthenticatedFlow()
-            mockRepositoryRuntime.clear()
+            mockRepositorySession.clear()
         }
-        confirmVerified(mockRepositoryNetworkMonitor, mockRepositoryRuntime)
     }
 }

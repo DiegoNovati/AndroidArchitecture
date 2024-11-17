@@ -2,8 +2,8 @@ package uk.co.itmms.androidArchitecture.data.repositories
 
 import arrow.core.Either
 import uk.co.itmms.androidArchitecture.data.datasources.IDataSourceBackend
-import uk.co.itmms.androidArchitecture.data.datasources.network.PassApiErrorCode
-import uk.co.itmms.androidArchitecture.data.datasources.network.PassApiException
+import uk.co.itmms.androidArchitecture.data.datasources.network.NetworkApiErrorCode
+import uk.co.itmms.androidArchitecture.data.datasources.network.NetworkApiException
 import uk.co.itmms.androidArchitecture.domain.repositories.IRepositoryAuthentication
 
 class RepositoryAuthentication(
@@ -30,7 +30,7 @@ class RepositoryAuthentication(
                     officeBid = officesList[0].bid,
                 )
             )
-        } catch (e: PassApiException) {
+        } catch (e: NetworkApiException) {
             return Either.Left(e.toRepositoryAuthenticationFailure())
         }
     }
@@ -40,18 +40,18 @@ class RepositoryAuthentication(
     }
 }
 
-internal fun PassApiException.toRepositoryAuthenticationFailure(): IRepositoryAuthentication.RepositoryAuthenticationFailure =
+internal fun NetworkApiException.toRepositoryAuthenticationFailure(): IRepositoryAuthentication.RepositoryAuthenticationFailure =
     when (this.errorCode) {
-        PassApiErrorCode.Http401 -> IRepositoryAuthentication.RepositoryAuthenticationFailure.LoginError
+        NetworkApiErrorCode.Http401 -> IRepositoryAuthentication.RepositoryAuthenticationFailure.LoginError
 
-        PassApiErrorCode.UnknownHost,
-        PassApiErrorCode.Timeout,
-        PassApiErrorCode.SSLError,
-        PassApiErrorCode.HttpUnmanaged,
-        PassApiErrorCode.IO -> IRepositoryAuthentication.RepositoryAuthenticationFailure.ConnectionProblems
+        NetworkApiErrorCode.UnknownHost,
+        NetworkApiErrorCode.Timeout,
+        NetworkApiErrorCode.SSLError,
+        NetworkApiErrorCode.HttpUnmanaged,
+        NetworkApiErrorCode.IO -> IRepositoryAuthentication.RepositoryAuthenticationFailure.ConnectionProblems
 
-        PassApiErrorCode.Http400,
-        PassApiErrorCode.Http403,
-        PassApiErrorCode.NoDataChanges,
-        PassApiErrorCode.Unexpected -> IRepositoryAuthentication.RepositoryAuthenticationFailure.BackendProblems
+        NetworkApiErrorCode.Http400,
+        NetworkApiErrorCode.Http403,
+        NetworkApiErrorCode.NoDataChanges,
+        NetworkApiErrorCode.Unexpected -> IRepositoryAuthentication.RepositoryAuthenticationFailure.BackendProblems
     }
