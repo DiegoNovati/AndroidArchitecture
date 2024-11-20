@@ -1,25 +1,33 @@
 package uk.co.itmms.androidArchitecture.screens.login
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import uk.co.itmms.androidArchitecture.R
+import uk.co.itmms.androidArchitecture.components.AppButton
+import uk.co.itmms.androidArchitecture.components.AppButtonType
+import uk.co.itmms.androidArchitecture.components.AppSwitch
+import uk.co.itmms.androidArchitecture.components.AppText
+import uk.co.itmms.androidArchitecture.components.AppTextField
+import uk.co.itmms.androidArchitecture.components.AppTextFieldType
+import uk.co.itmms.androidArchitecture.components.AppTextType
 import uk.co.itmms.androidArchitecture.domain.failures.FailureLogin
 import uk.co.itmms.androidArchitecture.domain.failures.UnexpectedError
+import uk.co.itmms.androidArchitecture.screens.PreviewAppScreen
 import uk.co.itmms.androidArchitecture.ui.theme.AndroidArchitectureTheme
-import uk.co.itmms.androidArchitecture.widgets.*
 
 @Composable
 fun LoginScreen(
@@ -40,7 +48,8 @@ private fun FailureLogin?.toMessage(): String? =
             FailureLogin.ConnectionProblems -> stringResource(id = R.string.loginErrorConnectionProblems)
             FailureLogin.BackendProblems -> stringResource(id = R.string.loginErrorBackendProblems)
             FailureLogin.LoginError -> stringResource(id = R.string.loginErrorLoginError)
-            is UnexpectedError -> it.e.localizedMessage ?: stringResource(id = R.string.loginErrorUnexpectedError)
+            is UnexpectedError -> it.e.localizedMessage
+                ?: stringResource(id = R.string.loginErrorUnexpectedError)
         }
     }
 
@@ -49,19 +58,8 @@ fun LoginScreenUI(
     state: LoginViewModel.State,
     onEvent: (LoginViewModel.EventType) -> Unit,
 ) {
-    val connectedText = if (!state.data.connected) stringResource(id = R.string.connectionMissing) else ""
-
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        modifier = Modifier.testTag(LoginScreenTestTag.TitleText.name),
-                        text = stringResource(id = R.string.loginTitle, connectedText),
-                    )
-                }
-            )
-        }
+        topBar = { LoginTopBar(connected = state.data.connected) },
     ) { padding ->
         Column(
             modifier = Modifier
@@ -75,96 +73,96 @@ fun LoginScreenUI(
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                OutlinedTextField(
+                AppTextField(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag(LoginScreenTestTag.UsernameTextField.name),
-                    label = {
-                        TextBody(
-                            text = stringResource(id = R.string.loginInputUsername),
-                        )
-                    },
+                        .fillMaxWidth(),
+                    label = stringResource(id = R.string.loginInputUsername),
                     value = state.data.username,
+                    testTag = LoginScreenTestTag.UsernameTextField.name,
                     enabled = !state.data.loggingIn,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    type = AppTextFieldType.Email,
                     onValueChange = {
-                        onEvent(LoginViewModel.EventType.UpdateData(
-                            state.data.copy(username = it)
-                        ))
-                    }
-                )
-                OutlinedTextField(
-                    modifier = Modifier
-                        .padding(bottom = 16.dp)
-                        .fillMaxWidth()
-                        .testTag(LoginScreenTestTag.PasswordTextField.name),
-                    label = {
-                        TextBody(
-                            text = stringResource(id = R.string.loginInputPassword)
+                        onEvent(
+                            LoginViewModel.EventType.UpdateData(
+                                state.data.copy(username = it)
+                            )
                         )
-                    },
-                    value = state.data.password,
-                    enabled = !state.data.loggingIn,
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    onValueChange = {
-                        onEvent(LoginViewModel.EventType.UpdateData(
-                            state.data.copy(password = it)
-                        ))
                     }
                 )
-                SwitchRow(
+                AppTextField(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    label = stringResource(id = R.string.loginInputPassword),
+                    value = state.data.password,
+                    testTag = LoginScreenTestTag.PasswordTextField.name,
+                    enabled = !state.data.loggingIn,
+                    type = AppTextFieldType.Password,
+                    onValueChange = {
+                        onEvent(
+                            LoginViewModel.EventType.UpdateData(
+                                state.data.copy(password = it)
+                            )
+                        )
+                    }
+                )
+                AppSwitch(
                     testTag = LoginScreenTestTag.FakeBackendSwitch.name,
                     text = stringResource(id = R.string.loginInputFakeBackend),
                     checked = state.data.fakeBackend,
                     onCheckedChange = {
-                        onEvent(LoginViewModel.EventType.UpdateData(
-                            state.data.copy(fakeBackend = it)
-                        ))
+                        onEvent(
+                            LoginViewModel.EventType.UpdateData(
+                                state.data.copy(fakeBackend = it)
+                            )
+                        )
                     },
                 )
-                SwitchRow(
+                AppSwitch(
                     testTag = LoginScreenTestTag.FakeAuthorizationExpiring.name,
                     text = stringResource(id = R.string.loginInputFakeAuthenticationExpire),
                     checked = state.data.fakeAuthenticationExpire,
                     onCheckedChange = {
-                        onEvent(LoginViewModel.EventType.UpdateData(
-                            state.data.copy(fakeAuthenticationExpire = it)
-                        ))
+                        onEvent(
+                            LoginViewModel.EventType.UpdateData(
+                                state.data.copy(fakeAuthenticationExpire = it)
+                            )
+                        )
                     },
                 )
-                ButtonRoundedEdgesPrimary(modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .fillMaxWidth()
-                    .testTag(LoginScreenTestTag.LoginButton.name),
+                AppButton(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    type = AppButtonType.Primary,
                     stringId = R.string.loginLoginButton,
-                    enabled = !state.data.loggingIn && state.data.username.isNotEmpty() &&state.data. password.isNotEmpty(),
+                    testTag = LoginScreenTestTag.LoginButton.name,
+                    enabled = !state.data.loggingIn && state.data.username.isNotEmpty() && state.data.password.isNotEmpty(),
                     onClick = { onEvent(LoginViewModel.EventType.Login) }
                 )
-                ButtonRoundedEdgesSecondary(
+                AppButton(
                     modifier = Modifier
-                        .padding(bottom = 16.dp)
-                        .fillMaxWidth()
-                        .testTag(LoginScreenTestTag.ResetButton.name),
+                        .fillMaxWidth(),
+                    type = AppButtonType.Secondary,
                     stringId = R.string.loginLoginReset,
                     enabled = !state.data.loggingIn,
+                    testTag = LoginScreenTestTag.ResetButton.name,
                     onClick = { onEvent(LoginViewModel.EventType.ResetData) }
                 )
-                    TextError(
-                        modifier = Modifier
-                            .padding(bottom = 16.dp)
-                            .fillMaxWidth()
-                            .testTag(LoginScreenTestTag.ErrorText.name),
-                        text = state.failureLogin?.toMessage() ?: "",
-                    )
+                AppText(
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .fillMaxWidth(),
+                    text = state.failureLogin?.toMessage() ?: "",
+                    type = AppTextType.Error,
+                    testTag = LoginScreenTestTag.ErrorText.name,
+                )
             }
         }
     }
 }
 
+@PreviewAppScreen
 @Composable
-@Preview(showBackground = true)
-fun LoginScreenUIEnabledPreview() {
+private fun LoginScreenUIEnabledPreview() {
     AndroidArchitectureTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -178,9 +176,9 @@ fun LoginScreenUIEnabledPreview() {
     }
 }
 
+@PreviewAppScreen
 @Composable
-@Preview(showBackground = true)
-fun LoginScreenUIDisabledPreview() {
+private fun LoginScreenUIDisabledPreview() {
     AndroidArchitectureTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -194,9 +192,9 @@ fun LoginScreenUIDisabledPreview() {
     }
 }
 
+@PreviewAppScreen
 @Composable
-@Preview(showBackground = true)
-fun LoginScreenUIDisconnectedPreview() {
+private fun LoginScreenUIDisconnectedPreview() {
     AndroidArchitectureTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -210,9 +208,9 @@ fun LoginScreenUIDisconnectedPreview() {
     }
 }
 
+@PreviewAppScreen
 @Composable
-@Preview(showBackground = true)
-fun LoginScreenUIErrorPreview() {
+private fun LoginScreenUIErrorPreview() {
     AndroidArchitectureTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -226,9 +224,9 @@ fun LoginScreenUIErrorPreview() {
     }
 }
 
+@PreviewAppScreen
 @Composable
-@Preview(showBackground = true)
-fun LoginScreenUIRealBackendPreview() {
+private fun LoginScreenUIRealBackendPreview() {
     AndroidArchitectureTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -241,8 +239,6 @@ fun LoginScreenUIRealBackendPreview() {
         }
     }
 }
-
-
 
 private val state: LoginViewModel.State by lazy {
     LoginViewModel.State(

@@ -1,6 +1,8 @@
 package uk.co.itmms.androidArchitecture.screens.login
 
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import uk.co.itmms.androidArchitecture.domain.failures.FailureLogin
 import uk.co.itmms.androidArchitecture.domain.usecases.NoParams
 import uk.co.itmms.androidArchitecture.domain.usecases.login.UseCaseLoginLogin
@@ -8,16 +10,15 @@ import uk.co.itmms.androidArchitecture.domain.usecases.login.UseCaseLoginMonitor
 import uk.co.itmms.androidArchitecture.screens.ViewModelBase
 import uk.co.itmms.androidArchitecture.services.IServiceNavigation
 import uk.co.itmms.androidArchitecture.services.Route
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val serviceNavigation: IServiceNavigation,
+    serviceNavigation: IServiceNavigation,
     useCaseLoginMonitor: UseCaseLoginMonitor,
     private val useCaseLoginLogin: UseCaseLoginLogin,
 ) : ViewModelBase<LoginViewModel.State>(
+    serviceNavigation = serviceNavigation,
     initialState = State(),
 ) {
     data class StateData(
@@ -36,8 +37,8 @@ class LoginViewModel @Inject constructor(
 
     sealed interface EventType {
         data class UpdateData(val stateData: StateData) : EventType
-        object ResetData: EventType
-        object Login : EventType
+        data object ResetData: EventType
+        data object Login : EventType
     }
 
     init {

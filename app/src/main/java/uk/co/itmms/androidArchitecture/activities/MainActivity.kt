@@ -10,9 +10,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import uk.co.itmms.androidArchitecture.navigation.NavigationHost
-import uk.co.itmms.androidArchitecture.ui.theme.AndroidArchitectureTheme
 import dagger.hilt.android.AndroidEntryPoint
+import uk.co.itmms.androidArchitecture.navigationGraph.NavigationHost
+import uk.co.itmms.androidArchitecture.ui.theme.AndroidArchitectureTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -21,6 +21,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             val navController = rememberNavController()
             viewModel.setNavController(

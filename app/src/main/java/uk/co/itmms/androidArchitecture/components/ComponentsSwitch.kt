@@ -1,4 +1,4 @@
-package uk.co.itmms.androidArchitecture.widgets
+package uk.co.itmms.androidArchitecture.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import uk.co.itmms.androidArchitecture.ui.theme.AndroidArchitectureTheme
 
 @Composable
-fun SwitchRow(
+fun AppSwitch(
     text: String,
     checked: Boolean,
     modifier: Modifier = Modifier,
@@ -20,13 +20,16 @@ fun SwitchRow(
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        TextBody(
-            text = text
+        AppText(
+            text = text,
+            type = AppTextType.Body,
+            testTag = text,
         )
         Switch(
             modifier = Modifier
@@ -39,9 +42,9 @@ fun SwitchRow(
 
 @Composable
 @Preview(showBackground = true)
-fun SwitchRowCheckedPreview() {
+private fun AppSwitchCheckedPreview() {
     AndroidArchitectureTheme {
-        SwitchRow(
+        AppSwitch(
             text = "This switch is on",
             checked = true,
             onCheckedChange = {},
@@ -51,9 +54,9 @@ fun SwitchRowCheckedPreview() {
 
 @Composable
 @Preview(showBackground = true)
-fun SwitchRowUncheckedPreview() {
+private fun AppSwitchUncheckedPreview() {
     AndroidArchitectureTheme {
-        SwitchRow(
+        AppSwitch(
             text = "This switch is off",
             checked = false,
             onCheckedChange = {},

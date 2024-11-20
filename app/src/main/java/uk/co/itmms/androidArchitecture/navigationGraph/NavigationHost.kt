@@ -1,4 +1,4 @@
-package uk.co.itmms.androidArchitecture.navigation
+package uk.co.itmms.androidArchitecture.navigationGraph
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController

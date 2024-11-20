@@ -1,10 +1,12 @@
 package uk.co.itmms.androidArchitecture.screens
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
+import uk.co.itmms.androidArchitecture.services.IServiceNavigation
 
 class ViewModelBaseTest {
 
@@ -38,6 +40,7 @@ class ViewModelBaseTest {
     private class MyViewModel(
         initialState: String,
     ): ViewModelBase<String>(
+        serviceNavigation = mockk<IServiceNavigation>(),
         initialState = initialState,
     ) {
         fun updateState(newState: String) {

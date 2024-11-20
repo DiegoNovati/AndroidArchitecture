@@ -8,7 +8,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -91,7 +90,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun HomeScreenUI(
+private fun HomeScreenUI(
     navController: NavHostController,
     startDestinationName: String,
     currentDestination: NavDestination?,
@@ -131,7 +130,7 @@ fun HomeScreenUI(
 }
 
 @Composable
-fun HomeTopBar(
+private fun HomeTopBar(
     connectedText: String,
     onLogout: () -> Unit,
 ) {
@@ -157,7 +156,7 @@ fun HomeTopBar(
 }
 
 @Composable
-fun BottomBar(
+private fun BottomBar(
     currentDestination: NavDestination?,
     onClick: (BottomBarRoute) -> Unit,
 ) {
@@ -178,7 +177,7 @@ fun BottomBar(
 }
 
 @Composable
-fun RowScope.AddItem(
+private fun RowScope.AddItem(
     screen: BottomBarScreen,
     currentDestination: NavDestination?,
     onClick: (BottomBarRoute) -> Unit,
@@ -203,7 +202,7 @@ fun RowScope.AddItem(
 }
 
 @Composable
-fun BottomNavigationHost(
+private fun BottomNavigationHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     startDestinationName: String,
@@ -222,7 +221,7 @@ fun BottomNavigationHost(
 
 @Composable
 @Preview(showBackground = true)
-fun HomeScreenUICustomersPreview() {
+private fun HomeScreenUICustomersPreview() {
     val navController = rememberNavController()
     navController.findDestination(BottomBarRoute.Customers.routeName)?.let {
         navController.navigate(it.id)
@@ -244,7 +243,7 @@ fun HomeScreenUICustomersPreview() {
 
 @Composable
 @Preview(showBackground = true)
-fun HomeScreenUIBookingsPreview() {
+private fun HomeScreenUIBookingsPreview() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -263,7 +262,7 @@ fun HomeScreenUIBookingsPreview() {
 
 @Composable
 @Preview(showBackground = true)
-fun HomeScreenUIDisconnectedPreview() {
+private fun HomeScreenUIDisconnectedPreview() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination

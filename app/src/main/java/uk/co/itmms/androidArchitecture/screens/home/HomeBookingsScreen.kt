@@ -1,74 +1,57 @@
 package uk.co.itmms.androidArchitecture.screens.home
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import uk.co.itmms.androidArchitecture.domain.entities.Booking
 import uk.co.itmms.androidArchitecture.domain.entities.BookingStatus
-import uk.co.itmms.androidArchitecture.extensions.toDescription
+import uk.co.itmms.androidArchitecture.screens.PreviewAppScreen
 import uk.co.itmms.androidArchitecture.ui.theme.AndroidArchitectureTheme
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 
 @Composable
 fun HomeBookingsScreen(
     bookingList: List<Booking>,
+    modifier: Modifier = Modifier,
 ) {
-    val formatTime = SimpleDateFormat("HH:mm", Locale.getDefault())
-    val listState = rememberLazyListState()
-
     LazyColumn(
         modifier = Modifier
-            .padding(16.dp),
-        state = listState,
+            .fillMaxSize()
+            .padding(16.dp)
+            .then(modifier),
+        state = rememberLazyListState(),
     ) {
         itemsIndexed(bookingList) { index, booking ->
-            Column(
+            HomeBookingRow(
                 modifier = Modifier
                     .fillMaxWidth(),
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text(
-                        text = "${formatTime.format(booking.start)} - ${formatTime.format(booking.end)}",
-                        style = MaterialTheme.typography.body1.copy(
-                            fontWeight = FontWeight.Bold,
-                        ),
-                    )
-                    Text(
-                        text = booking.status.toDescription(),
-                        style = MaterialTheme.typography.body1
-                    )
-                }
-                if (index < bookingList.lastIndex)
-                    Divider(
-                        color = Color.Gray.copy(alpha = 0.4f),
-                        thickness = 1.dp,
-                    )
-            }
+                booking = booking,
+                showDivider = index < bookingList.lastIndex,
+            )
         }
     }
 }
 
+@PreviewAppScreen
 @Composable
-@Preview(showBackground = true)
-fun HomeBookingsScreenPreview() {
+private fun HomeBookingsScreenPreview() {
+    AndroidArchitectureTheme {
+        HomeBookingsScreen(
+            bookingList = getBookingList(),
+        )
+    }
+}
+
+private fun getBookingList(): List<Booking> {
     val formatTime = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-    val bookingList = listOf(
+    return listOf(
         Booking(
             1,
             "1",
@@ -91,9 +74,4 @@ fun HomeBookingsScreenPreview() {
             formatTime.parse("20:00:00")!!,
         ),
     )
-    AndroidArchitectureTheme {
-        HomeBookingsScreen(
-            bookingList = bookingList,
-        )
-    }
 }

@@ -1,6 +1,19 @@
 <resources>
     <string name="appName">Android Architecture</string>
 
+    <string name="dialog_button_ok">OK</string>
+    <string name="dialog_button_yes">Yes</string>
+    <string name="dialog_button_no">No</string>
+    <string name="dialog_button_cancel">Cancel</string>
+    <string name="dialog_button_save">Save</string>
+    <string name="dialog_button_continue">Continue</string>
+    <string name="dialog_button_logout">Logout</string>
+    <string name="dialog_progress_title">Loading…</string>
+    <string name="dialog_saving_title">Saving…</string>
+    <string name="dialog_error_title">Error</string>
+    <string name="dialog_information_title">Information</string>
+    <string name="dialog_confirmationRequest_title">Confirmation request</string>
+
     <string name="connectionMissing">- Disconnected</string>
 
     <string name="loginTitle">Login %s</string>

@@ -7,8 +7,8 @@ import javax.inject.Inject
  * List of possible routes
  */
 sealed class Route(val routeName: String, val isInitialRoute: Boolean = false) {
-    object Login : Route("Login", true)
-    object Home : Route("Home")
+    data object Login : Route("Login", true)
+    data object Home : Route("Home")
 
     companion object {
         fun getInitialRoute(): Route =
